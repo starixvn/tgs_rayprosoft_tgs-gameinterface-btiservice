@@ -1,0 +1,118 @@
+syntax = "proto3";
+
+import "phoenix/protobuf/decimal.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Tgs.GameInterface.BTiService.Protos";
+
+package GameInterfaceBTiService;
+
+// The greeting service definition.
+service GameInterfaceBTiService {
+  // Sends a greeting
+  rpc CreatePlayer (GameInterfaceBTiServiceCreatePlayerRequest) returns (GameInterfaceBTiServiceReply);
+  rpc FundIn (GameInterfaceBTiServiceFundRequest) returns (GameInterfaceBTiServiceFundReply);
+  rpc FundOrderChecking(GameInterfaceBTiServiceFundOrderCheckingRequest) returns (GameInterfaceBTiServiceFundOrderCheckingReply);
+  rpc FundOut (GameInterfaceBTiServiceFundRequest) returns (GameInterfaceBTiServiceFundReply);
+  rpc GetBalance (GameInterfaceBTiServiceBalanceRequest) returns (GameInterfaceBTiServiceBalanceReply);  
+  rpc GetGameUrl (GameInterfaceBTiServiceGameUrlRequest) returns (GameInterfaceBTiServiceGameUrlReply);
+  rpc GetGamePullRecord (GameInterfaceBTiServiceGamePullRecordRequest) returns (GameInterfaceBTiServiceGamePullRecordReply);
+}
+
+// The request message containing the user's name.
+message GameInterfaceBTiServiceFundRequest {
+	string api_url = 1;
+	string agent_user_name = 2;
+	string agent_password = 3;
+	string player_code = 4;
+	string transaction_id = 5;
+	phoenix.protobuf.DecimalValue amount = 6;
+}
+
+message GameInterfaceBTiServiceFundOrderCheckingRequest {
+	string api_url = 1;
+	string agent_user_name = 2;
+	string agent_password = 3;
+	string transaction_id = 4;
+}
+
+message GameInterfaceBTiServiceBalanceRequest {
+	string api_url = 1;
+	string agent_user_name = 2;
+	string agent_password = 3;
+	string player_code = 4;
+}
+
+message GameInterfaceBTiServiceKickPlayerRequest {
+	string api_url = 1;
+	string agent_user_name = 2;
+	string agent_password = 3;
+	string player_code = 4;
+}
+
+message GameInterfaceBTiServiceCreatePlayerRequest {
+	string api_url = 1;
+	string agent_user_name = 2;
+	string agent_password = 3;
+	string player_code = 4;
+	string currency = 5;
+}
+
+message GameInterfaceBTiServiceGameUrlRequest {
+	string api_url = 1;
+	string agent_user_name = 2;
+	string agent_password = 3;
+	string player_code = 4;
+	string external_game_id = 5;
+	string language = 6;
+	string currency = 7;
+	bool is_mobile = 8;
+}
+
+message GameInterfaceBTiServiceGamePullRecordRequest {
+	string api_url = 1;
+	string agent_user_name = 2;
+	string agent_password = 3;
+	google.protobuf.Timestamp start_time = 4; 
+	google.protobuf.Timestamp end_time = 5;
+	int32 page = 6;
+	int32 page_limit = 7;
+}
+
+// The response message containing the greetings.
+message GameInterfaceBTiServiceReply {
+	bool success = 1;
+}
+
+message GameInterfaceBTiServiceFundReply {
+	bool success = 1;
+	string message = 2;
+	string transaction_id = 3;	
+	phoenix.protobuf.DecimalValue balance_after = 4;
+}
+
+message GameInterfaceBTiServiceFundOrderCheckingReply {
+	bool exist = 1;
+}
+
+message GameInterfaceBTiServiceBalanceReply {
+	bool success = 1;
+	string message = 2;
+	bool is_player_exist = 3;
+	phoenix.protobuf.DecimalValue balance = 4;
+}
+
+message GameInterfaceBTiServiceGameUrlReply {
+	bool success = 1;
+	string message = 2;
+	bool is_player_exist = 3;
+	string game_url = 4;
+}
+
+message GameInterfaceBTiServiceGamePullRecordReply {
+	repeated GameInterfaceBTiServiceGamePullRecord items = 1;
+}
+
+message GameInterfaceBTiServiceGamePullRecord {
+	
+}
