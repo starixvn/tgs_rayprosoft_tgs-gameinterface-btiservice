@@ -1,5 +1,4 @@
 ﻿using System.Runtime.CompilerServices;
-using Microsoft.Extensions.Logging;
 using Tgs.ServiceUtility;
 
 namespace Tgs.GameInterface.BTiService.Core.ApplicationServices;
@@ -20,11 +19,11 @@ internal class GameRecordGetService : IQueryService<GameRecordQuery, GameRecordR
     public async IAsyncEnumerable<GameRecordResult> QueryAsync(GameRecordQuery query, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         var result = await _client.BettinghistoryAsync(
-            apiUrl: query.ApiUrl,   
+            apiUrl: query.ApiUrl,
             agentUserName: query.AgentUserName,
             agentPassword: query.AgentPassword,
             startTime: query.StartTime.UtcDateTime,
-            endTime: query.EndTime.UtcDateTime,            
+            endTime: query.EndTime.UtcDateTime,
             cancellationToken: cancellationToken).ConfigureAwait(false);
 
         //if (!result.Success)

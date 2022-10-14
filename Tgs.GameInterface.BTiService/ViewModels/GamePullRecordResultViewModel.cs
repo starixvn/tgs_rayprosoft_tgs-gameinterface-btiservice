@@ -1,4 +1,3 @@
-﻿
-namespace Tgs.GameInterface.BTiService.ViewModels;
+﻿namespace Tgs.GameInterface.BTiService.ViewModels;
 
 public record GamePullRecordResultViewModel();

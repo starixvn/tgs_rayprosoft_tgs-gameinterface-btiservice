@@ -6,7 +6,7 @@ using System.Web;
 using Microsoft.Extensions.Logging;
 using Tgs.GameInterface.BTiService.Core;
 using Tgs.GameInterface.BTiService.Core.Models;
-using Tgs.Logging;
+using Tgs.GameInterface.BTiService.Repositories.Models;
 
 namespace Tgs.GameInterface.BTiService.Repositories;
 
@@ -142,9 +142,9 @@ internal class GameApiClient : IGameApiClient
         {
             return false;
         }
-        
+
         _ = document.RootElement.TryGetProperty("TransactionID", out var jsonTransactionID);
-        
+
         var transactionID = jsonTransactionID.GetInt32();
 
         return true;
@@ -309,8 +309,8 @@ internal class GameApiClient : IGameApiClient
         var errorCode = jsonErrorCode.ToString();
 
         if (errorCode is not "NoError")
-        {            
-            _logger.LogError("Failed to get customer data.({playerCode})",playerCode);
+        {
+            _logger.LogError("Failed to get customer data.({playerCode})", playerCode);
             return new GetCustomerByMerchantCodeResult(false);
         }
 
@@ -320,10 +320,10 @@ internal class GameApiClient : IGameApiClient
         var balance = jsonBalance.GetDecimal();
         var customerID = jsonCustomerID.GetInt32();
 
-        return new GetCustomerByMerchantCodeResult(true,customerID, balance);
+        return new GetCustomerByMerchantCodeResult(true, customerID, balance);
     }
 
-    public ValueTask<GetGameUrlResult> GetGameUrlAsync(Uri apiUrl, string operatorToken,bool isMobile, string? oddsStyleId, string? sportId, string? leagueId, string? eventId, string? api, string language = "en", CancellationToken cancellationToken = default)
+    public ValueTask<GetGameUrlResult> GetGameUrlAsync(Uri apiUrl, string operatorToken, bool isMobile, string? oddsStyleId, string? sportId, string? leagueId, string? eventId, string? api, string language = "en", CancellationToken cancellationToken = default)
     {
         var view = "asian-view";
         if (isMobile)
@@ -332,12 +332,12 @@ internal class GameApiClient : IGameApiClient
         var queryStrings = HttpUtility.ParseQueryString(string.Empty);
 
         queryStrings.Add("operatorToken", operatorToken);
-        
-        if(oddsStyleId != null)
-            queryStrings.Add("oddsStyleId",oddsStyleId);
-        
-        if(sportId != null)
-            queryStrings.Add("sportId",sportId);
+
+        if (oddsStyleId != null)
+            queryStrings.Add("oddsStyleId", oddsStyleId);
+
+        if (sportId != null)
+            queryStrings.Add("sportId", sportId);
 
         if (leagueId != null)
             queryStrings.Add("leagueId", leagueId);
@@ -350,11 +350,11 @@ internal class GameApiClient : IGameApiClient
 
         var relativeUri = $"/{language}/{view}/?{queryStrings}";
 
-        var url = new Uri(apiUrl,relativeUri);
+        var url = new Uri(apiUrl, relativeUri);
 
         return ValueTask.FromResult(new GetGameUrlResult
-        { 
-            Url= url.ToString(),
+        {
+            Url = url.ToString(),
         });
     }
 
@@ -510,7 +510,7 @@ internal class GameApiClient : IGameApiClient
             responseMessage = await sr.ReadToEndAsync().ConfigureAwait(false) ?? string.Empty;
         }
 
-        var apiLogEvent = new ApiLogEvent
+        var apiLogEvent = new GameApiLogEvent
         {
             Path = httpResponseMessage.RequestMessage?.RequestUri?.AbsoluteUri.NoLongerThan(512) ?? string.Empty,
             Method = httpResponseMessage.RequestMessage?.Method.ToString().NoLongerThan(8) ?? string.Empty,

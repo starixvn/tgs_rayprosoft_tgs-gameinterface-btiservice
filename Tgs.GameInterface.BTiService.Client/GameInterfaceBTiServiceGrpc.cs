@@ -86,5 +86,5 @@ internal class GameInterfaceBTiServiceGrpc : IGameInterfaceBTiServiceGrpc
             PlayerCode = playerCode,
             ExternalGameId = externalGameId,
             Language = language
-        }, cancellationToken: cancellationToken).ConfigureAwait(false);    
+        }, cancellationToken: cancellationToken).ConfigureAwait(false);
 }

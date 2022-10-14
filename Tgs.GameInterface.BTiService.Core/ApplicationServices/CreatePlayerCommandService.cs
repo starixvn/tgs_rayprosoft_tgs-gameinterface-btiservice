@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Options;
-using Tgs.ServiceUtility;
+﻿using Tgs.ServiceUtility;
 
 namespace Tgs.GameInterface.BTiService.Core.ApplicationServices;
 

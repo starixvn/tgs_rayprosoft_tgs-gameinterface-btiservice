@@ -3,14 +3,14 @@
 namespace Tgs.GameInterface.BTiService.Core.ApplicationServices;
 
 internal class GameUrlGetService : IGetService<GameUrlQuery, GameUrlResult>
-{    
+{
     private readonly IGameApiClient _client;
     private readonly ICommandService<CreatePlayerCommand> _createPlayerCommandService;
 
-    public GameUrlGetService(        
+    public GameUrlGetService(
         IGameApiClient client,
         ICommandService<CreatePlayerCommand> createPlayerCommandService)
-    {        
+    {
         _client = client ?? throw new ArgumentNullException(nameof(client));
         _createPlayerCommandService = createPlayerCommandService ?? throw new ArgumentNullException(nameof(createPlayerCommandService));
     }
@@ -18,12 +18,9 @@ internal class GameUrlGetService : IGetService<GameUrlQuery, GameUrlResult>
     public async ValueTask<GameUrlResult> GetAsync(GameUrlQuery query, CancellationToken cancellationToken = default)
     {
         var authTokenResult = await _client
-            .GetCustomerAuthTokenAsync(query.ApiUrl,query.AgentUserName,query.AgentPassword,query.PlayerCode, cancellationToken)
+            .GetCustomerAuthTokenAsync(query.ApiUrl, query.AgentUserName, query.AgentPassword, query.PlayerCode, cancellationToken)
             .ConfigureAwait(false);
 
-
-
-      
         var response = await _client
             .GetGameUrlAsync(
                 query.ApiUrl,
@@ -34,7 +31,7 @@ internal class GameUrlGetService : IGetService<GameUrlQuery, GameUrlResult>
                 leagueId: null,
                 eventId: null,
                 api: null,
-                query.Language,                
+                query.Language,
                 cancellationToken: cancellationToken)
             .ConfigureAwait(false);
 
