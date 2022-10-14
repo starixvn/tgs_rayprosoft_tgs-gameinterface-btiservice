@@ -8,7 +8,7 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 ARG BuildConfiguration=Release
 WORKDIR /src
-COPY ["NuGet.config", "."]
+COPY ["nuget.config", "."]
 COPY ["Tgs.GameInterface.BTiService/Tgs.GameInterface.BTiService.csproj", "Tgs.GameInterface.BTiService/"]
 COPY ["Tgs.GameInterface.BTiService.Core/Tgs.GameInterface.BTiService.Core.csproj", "Tgs.GameInterface.BTiService.Core/"]
 COPY ["Tgs.GameInterface.BTiService.Repositories/Tgs.GameInterface.BTiService.Repositories.csproj", "Tgs.GameInterface.BTiService.Repositories/"]
