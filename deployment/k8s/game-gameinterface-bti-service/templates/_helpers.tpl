@@ -47,10 +47,11 @@ Selector labels
 */}}
 {{- define "game-gameinterface-bti-service.selectorLabels" -}}
 app.kubernetes.io/name: {{ include "game-gameinterface-bti-service.name" . }}
-app: {{ include "game-gameinterface-bti-service.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
+app: {{ include "game-gameinterface-bti-service.name" . }}
 tgs.kind: game
 tgs.game.kind: gameinterface
+tgs.gameprovider.kind: bti
 {{- end }}
 
 {{/*
