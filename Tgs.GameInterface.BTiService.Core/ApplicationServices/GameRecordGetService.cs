@@ -6,12 +6,12 @@ namespace Tgs.GameInterface.BTiService.Core.ApplicationServices;
 
 internal class GameRecordGetService : IQueryService<GameRecordQuery, GameRecordResult>
 {
-    private readonly IGameApiClient _client;
+    private readonly IGameDataApiClient _client;
     private readonly ILogger<GameRecordGetService> _logger;
 
     public GameRecordGetService(
         ILogger<GameRecordGetService> logger,
-        IGameApiClient client)
+        IGameDataApiClient client)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _client = client ?? throw new ArgumentNullException(nameof(client));
@@ -19,6 +19,8 @@ internal class GameRecordGetService : IQueryService<GameRecordQuery, GameRecordR
 
     public async IAsyncEnumerable<GameRecordResult> QueryAsync(GameRecordQuery query, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
+        /*
+        /*
         var result = await _client.BettinghistoryAsync(
             apiUrl: query.ApiUrl,
             agentUserName: query.AgentUserName,
@@ -55,5 +57,7 @@ internal class GameRecordGetService : IQueryService<GameRecordQuery, GameRecordR
                          //AgentId: transaction.AgentId
                          );
         }
+        */
+        yield break;
     }
 }

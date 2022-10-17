@@ -103,7 +103,6 @@ public class BTiController : ControllerBase
             PlayerCode: model.PlayerCode)).ConfigureAwait(false);
 
         return new BalanceResultViewModel(
-            result.Success,
             result.IsPlayerExist,
             result.Balance);
     }

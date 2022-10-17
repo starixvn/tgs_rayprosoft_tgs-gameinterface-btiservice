@@ -4,18 +4,6 @@ namespace Tgs.GameInterface.BTiService.Core;
 
 public interface IGameApiClient
 {
-    ValueTask<BettinghistoryResult> BettinghistoryAsync(Uri apiUrl, string agentUserName, string agentPassword, DateTime startTime, DateTime endTime, CancellationToken cancellationToken = default);
-
-    ValueTask<BettinghistoryResult> BettinghistoryPaginationAsync(
-        Uri apiUrl,
-        string agentUserName,
-        string agentPassword,
-        DateTime startTime,
-        DateTime endTime,
-        int page = 0,
-        int pageLimit = 1000,
-        CancellationToken cancellationToken = default);
-
     ValueTask<bool> CheckTransactionAsync(
         Uri apiUrl,
         string agentUserName,
@@ -33,7 +21,12 @@ public interface IGameApiClient
         string customerDefaultLanguage,
         CancellationToken cancellationToken = default);
 
-    ValueTask<GetBalanceResult> GetBalanceAsync(Uri apiUrl, string agentUserName, string agentPassword, string playerCode, CancellationToken cancellationToken = default);
+    ValueTask<GetBalanceResult> GetBalanceAsync(
+        Uri apiUrl,
+        string agentUserName,
+        string agentPassword,
+        string playerCode,
+        CancellationToken cancellationToken = default);
 
     ValueTask<GetCustomerAuthTokenResult> GetCustomerAuthTokenAsync(
         Uri apiUrl,
@@ -50,12 +43,6 @@ public interface IGameApiClient
         CancellationToken cancellationToken = default);
 
     ValueTask<GetGameUrlResult> GetGameUrlAsync(Uri apiUrl, string operatorToken, bool isMobile, string? oddsStyleId, string? sportId, string? leagueId, string? eventId, string? api, string language = "en", CancellationToken cancellationToken = default);
-
-    ValueTask<string> GetTokenAsync(
-       Uri apiUrl,
-       string agentUserName,
-       string agentPassword,
-       CancellationToken cancellationToken = default);
 
     /// <summary>
     /// (GP -> Tgs) Transfers from WHL asynchronous.

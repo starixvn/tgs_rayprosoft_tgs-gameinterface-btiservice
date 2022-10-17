@@ -63,7 +63,6 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 builder.Services.AddBTiServiceCore();
-builder.Services.AddBTiServiceRepositories();
 
 builder.Services
      .AddSingleton<IConfigureOptions<OtlpExporterOptions>>(

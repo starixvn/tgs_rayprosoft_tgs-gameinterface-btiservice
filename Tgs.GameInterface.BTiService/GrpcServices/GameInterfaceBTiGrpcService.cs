@@ -108,7 +108,6 @@ public class GameInterfaceBTiGrpcService : GameInterfaceBTiService.GameInterface
 
         return new GameInterfaceBTiServiceBalanceReply()
         {
-            Success = result.Success,
             IsPlayerExist = result.IsPlayerExist,
             Balance = result.Balance
         };

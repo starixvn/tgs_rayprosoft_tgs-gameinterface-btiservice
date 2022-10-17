@@ -21,7 +21,6 @@ internal class BalanceGetService : IGetService<BalanceQuery, BalanceResult>
             cancellationToken).ConfigureAwait(false);
 
         return new BalanceResult(
-             Success: result.Success,
              IsPlayerExist: result.IsPlayerExist,
              Balance: result.Balance);
     }

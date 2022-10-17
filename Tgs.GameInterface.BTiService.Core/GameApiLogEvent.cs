@@ -1,4 +1,4 @@
-﻿namespace Tgs.GameInterface.BTiService.Repositories.Models;
+﻿namespace Tgs.GameInterface.BTiService.Core;
 
 public record GameApiLogEvent
 {
