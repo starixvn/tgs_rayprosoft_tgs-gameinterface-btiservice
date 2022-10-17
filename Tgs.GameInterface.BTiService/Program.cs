@@ -14,7 +14,6 @@ builder.Configuration
     .AddEnvironmentVariables();
 
 builder.Logging
-    .AddTgsLog()
     .AddOpenTelemetry(options =>
     {
         options.IncludeFormattedMessage = true;
@@ -63,26 +62,13 @@ builder.Services.AddSwaggerGen(c =>
     }
 });
 
-builder.Services
-    .AddMessageQueue()
-    .AddNatsMessageQueue(natsConfig =>
-    {
-        _ = natsConfig
-        .ConfigQueueOptions((options, sp) =>
-        {
-            var configuration = sp.GetRequiredService<IConfiguration>();
-            options.Url = configuration.GetConnectionString("Nats");
-        });
-    })
-    .AddNatsGlobPatternExchange("*");
-
 builder.Services.AddBTiServiceCore();
 builder.Services.AddBTiServiceRepositories();
 
 builder.Services
      .AddSingleton<IConfigureOptions<OtlpExporterOptions>>(
         sp => new ConfigureNamedOptions<OtlpExporterOptions>(
-            Microsoft.Extensions.Options.Options.DefaultName,
+            Options.DefaultName,
             exporterOptions =>
             {
                 var config = sp.GetRequiredService<IConfiguration>();
@@ -111,6 +97,7 @@ builder.Services
                 || !httpContext.Request.Path.StartsWithSegments("/swagger")
                 && !httpContext.Request.Path.StartsWithSegments("/healthz")
                 && !httpContext.Request.Path.StartsWithSegments("/profiler/")
+                && !httpContext.Request.Path.StartsWithSegments("/metrics")
                 && !new[] { "html", "ico", "png", "jpg" }.Any(
                     ext => httpContext.Request.Path.Value.EndsWith($".{ext}"));
         };

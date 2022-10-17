@@ -1,4 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
+using Microsoft.Extensions.Logging;
 using Tgs.ServiceUtility;
 
 namespace Tgs.GameInterface.BTiService.Core.ApplicationServices;
