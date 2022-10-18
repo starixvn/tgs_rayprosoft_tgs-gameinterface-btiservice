@@ -28,7 +28,7 @@ public interface IGameApiClient
         string merchantCustomerCode,
         CancellationToken cancellationToken = default);
 
-    ValueTask<GetCustomerByMerchantCodeResult> GetCustomerByMerchantCodeAsync(
+    ValueTask<GetBalanceResult> GetBalanceAsync(
         Uri apiUrl,
         string agentUserName,
         string agentPassword,

@@ -128,7 +128,7 @@ internal class GameApiClient : IGameApiClient
         return new GetCustomerAuthTokenResult(xmlDocument["AuthToken"]?.ToString() ?? throw new Exception(""));
     }
 
-    public async ValueTask<GetCustomerByMerchantCodeResult> GetCustomerByMerchantCodeAsync(
+    public async ValueTask<GetBalanceResult> GetBalanceAsync(
         Uri apiUrl, 
         string agentUserName, 
         string agentPassword, 
@@ -142,12 +142,12 @@ internal class GameApiClient : IGameApiClient
             ["MerchantCustomerCode"] = merchantCustomerCode,
         };
 
-        var url = new Uri(apiUrl, "/api/walletservice/WHLCustomers/GetCustomerByMerchantCode");
+        var url = new Uri(apiUrl, "/api/walletservice/WHLCustomers/GetBalance");
 
         var xmlDocument = await PostAsync(
             url,
             parameters,
-            "GetCustomerByMerchantCode",
+            "GetBalance",
             cancellationToken).ConfigureAwait(false);
 
         var errorCode = xmlDocument.GetElementsByTagName("ErrorCode")[0]?.InnerText;
@@ -157,14 +157,14 @@ internal class GameApiClient : IGameApiClient
         {
             return errorCode is null || !errorCode.Equals("CustomerNotFound", StringComparison.OrdinalIgnoreCase)
                 ? throw new GameProviderResponseErrorException(errorCode)
-                : new GetCustomerByMerchantCodeResult(
+                : new GetBalanceResult(
                     IsPlayerExist: false,
                     Balance: 0);
         }
 
         var balance = decimal.Parse(xmlDocument.GetElementsByTagName("Balance")[0]?.InnerText!);
 
-        return new GetCustomerByMerchantCodeResult(
+        return new GetBalanceResult(
                     IsPlayerExist: true,
                     Balance: balance);
     }

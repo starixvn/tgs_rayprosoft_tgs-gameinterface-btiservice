@@ -1,5 +1,5 @@
 ﻿namespace Tgs.GameInterface.BTiService.Core.Models;
 
-public record GetCustomerByMerchantCodeResult(
+public record GetBalanceResult(
     bool IsPlayerExist,
     decimal Balance);

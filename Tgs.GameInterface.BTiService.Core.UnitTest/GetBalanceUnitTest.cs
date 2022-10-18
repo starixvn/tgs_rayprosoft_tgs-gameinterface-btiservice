@@ -7,7 +7,7 @@ using Tgs.GameInterface.BTiService.Core.Exceptions;
 namespace Tgs.GameInterface.BTiService.Core.UnitTest;
 
 [TestClass]
-public class GetCustomerByMerchantCodeUnitTest
+public class GetBalanceUnitTest
 {
     [TestMethod]
     public async Task 玩家不存在()
@@ -17,7 +17,7 @@ public class GetCustomerByMerchantCodeUnitTest
         var agentPassword = "IM60Ho7Y4B9C";
         var merchantCustomerCode = "test";
 
-        var url = new Uri(apiUrl, "/api/walletservice/WHLCustomers/GetCustomerByMerchantCode");
+        var url = new Uri(apiUrl, "/api/walletservice/WHLCustomers/GetBalance");
         var response = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<MerchantResponse xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"http://networkpot.com/\">\r\n    <ErrorCode>CustomerNotFound</ErrorCode>\r\n    <CustomerID>-1</CustomerID>\r\n    <AuthToken />\r\n    <Balance>0</Balance>\r\n    <OpenBetsBalance>0</OpenBetsBalance>\r\n    <TransactionID>-1</TransactionID>\r\n</MerchantResponse>";
         var handler = new MockHttpMessageHandler();
         _ = handler.Expect(HttpMethod.Post, url.ToString())
@@ -29,7 +29,7 @@ public class GetCustomerByMerchantCodeUnitTest
         var sut = new GameApiClient(fakeHttpClient, fakeLog);
 
         var actual = await sut
-            .GetCustomerByMerchantCodeAsync(
+            .GetBalanceAsync(
                 apiUrl: apiUrl,
                 agentUserName: agentUserName,
                 agentPassword: agentPassword,
@@ -48,7 +48,7 @@ public class GetCustomerByMerchantCodeUnitTest
         var agentPassword = "IM60Ho7Y4B9C";
         var merchantCustomerCode = "test";
 
-        var url = new Uri(apiUrl, "/api/walletservice/WHLCustomers/GetCustomerByMerchantCode");
+        var url = new Uri(apiUrl, "/api/walletservice/WHLCustomers/GetBalance");
         var response = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<MerchantResponse xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"http://networkpot.com/\">\r\n    <ErrorCode>NoError</ErrorCode>\r\n    <CustomerID>1</CustomerID>\r\n    <AuthToken />\r\n    <Balance>100</Balance>\r\n    <OpenBetsBalance>0</OpenBetsBalance>\r\n    <TransactionID>-1</TransactionID>\r\n</MerchantResponse>";
         var handler = new MockHttpMessageHandler();
         _ = handler.Expect(HttpMethod.Post, url.ToString())
@@ -60,7 +60,7 @@ public class GetCustomerByMerchantCodeUnitTest
         var sut = new GameApiClient(fakeHttpClient, fakeLog);
 
         var actual = await sut
-            .GetCustomerByMerchantCodeAsync(
+            .GetBalanceAsync(
                 apiUrl: apiUrl,
                 agentUserName: agentUserName,
                 agentPassword: agentPassword,
@@ -80,7 +80,7 @@ public class GetCustomerByMerchantCodeUnitTest
         var agentPassword = "IM60Ho7Y4B9C";
         var merchantCustomerCode = "test";
 
-        var url = new Uri(apiUrl, "/api/walletservice/WHLCustomers/GetCustomerByMerchantCode");
+        var url = new Uri(apiUrl, "/api/walletservice/WHLCustomers/GetBalance");
         var response = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<MerchantResponse xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"http://networkpot.com/\">\r\n    <ErrorCode>Exception</ErrorCode>\r\n    <CustomerID>-1</CustomerID>\r\n    <AuthToken />\r\n    <Balance>0</Balance>\r\n    <OpenBetsBalance>0</OpenBetsBalance>\r\n    <TransactionID>-1</TransactionID>\r\n</MerchantResponse>";
         var handler = new MockHttpMessageHandler();
         _ = handler.Expect(HttpMethod.Post, url.ToString())
@@ -93,7 +93,7 @@ public class GetCustomerByMerchantCodeUnitTest
 
         _ = await Assert
             .ThrowsExceptionAsync<GameProviderResponseErrorException>(() =>
-                sut.GetCustomerByMerchantCodeAsync(
+                sut.GetBalanceAsync(
                     apiUrl: apiUrl,
                     agentUserName: agentUserName,
                     agentPassword: agentPassword,
