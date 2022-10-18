@@ -13,8 +13,8 @@ public class TransferFromWHLUnitTest
     public async Task 遊戲廠商包轉出主錢包成功()
     {
         var apiUrl = new Uri("https://wallet.bti.bet/");
-        var agentUserName = "PegaGaming";
-        var agentPassword = "lQH8635mmocK";
+        var agentUserName = "PegaGaming_GPIRMB";
+        var agentPassword = "IM60Ho7Y4B9C";
         var merchantCustomerCode = "test";
         var refTransactionCode = Guid.NewGuid().ToString("N");
         var amount = 10m;
@@ -52,8 +52,8 @@ public class TransferFromWHLUnitTest
     public async Task 其他錯誤()
     {
         var apiUrl = new Uri("https://wallet.bti.bet/");
-        var agentUserName = "PegaGaming";
-        var agentPassword = "lQH8635mmocK";
+        var agentUserName = "PegaGaming_GPIRMB";
+        var agentPassword = "IM60Ho7Y4B9C";
         var merchantCustomerCode = "test";
         var refTransactionCode = Guid.NewGuid().ToString("N");
         var amount = 10m;

@@ -13,8 +13,8 @@ public class GetTokenUnitTest
     public async Task Normal_Process()
     {
         var apiUrl = new Uri("https://asia-east2-bq-data-api.cloudfunctions.net/");
-        var agentUserName = "PegaGaming";
-        var agentPassword = "lQH8635mmocK";
+        var agentUserName = "PegaGaming_GPIRMB";
+        var agentPassword = "IM60Ho7Y4B9C";
         var response = new
         {
             errorCode = 0,

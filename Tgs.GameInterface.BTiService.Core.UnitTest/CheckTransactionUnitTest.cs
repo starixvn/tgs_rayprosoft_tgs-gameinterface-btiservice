@@ -13,8 +13,8 @@ public class CheckTransactionUnitTest
     public async Task 訂單不存在()
     {
         var apiUrl = new Uri("https://wallet.bti.bet/");
-        var agentUserName = "PegaGaming";
-        var agentPassword = "lQH8635mmocK";
+        var agentUserName = "PegaGaming_GPIRMB";
+        var agentPassword = "IM60Ho7Y4B9C";
         var transactionId = Guid.NewGuid().ToString("N");
 
         var url = new Uri(apiUrl, "/api/walletservice/WHLCustomers/CheckTransaction");
@@ -44,8 +44,8 @@ public class CheckTransactionUnitTest
     public async Task 訂單存在()
     {
         var apiUrl = new Uri("https://wallet.bti.bet/");
-        var agentUserName = "PegaGaming";
-        var agentPassword = "lQH8635mmocK";
+        var agentUserName = "PegaGaming_GPIRMB";
+        var agentPassword = "IM60Ho7Y4B9C";
         var transactionId = Guid.NewGuid().ToString("N");
 
         var url = new Uri(apiUrl, "/api/walletservice/WHLCustomers/CheckTransaction");
@@ -75,8 +75,8 @@ public class CheckTransactionUnitTest
     public async Task 其他錯誤()
     {
         var apiUrl = new Uri("https://wallet.bti.bet/");
-        var agentUserName = "PegaGaming";
-        var agentPassword = "lQH8635mmocK";
+        var agentUserName = "PegaGaming_GPIRMB";
+        var agentPassword = "IM60Ho7Y4B9C";
         var transactionId = Guid.NewGuid().ToString("N");
 
         var url = new Uri(apiUrl, "/api/walletservice/WHLCustomers/CheckTransaction");

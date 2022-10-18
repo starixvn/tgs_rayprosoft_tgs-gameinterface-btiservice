@@ -13,8 +13,8 @@ public class GetCustomerByMerchantCodeUnitTest
     public async Task 玩家不存在()
     {
         var apiUrl = new Uri("https://wallet.bti.bet/");
-        var agentUserName = "PegaGaming";
-        var agentPassword = "lQH8635mmocK";
+        var agentUserName = "PegaGaming_GPIRMB";
+        var agentPassword = "IM60Ho7Y4B9C";
         var merchantCustomerCode = "test";
 
         var url = new Uri(apiUrl, "/api/walletservice/WHLCustomers/GetCustomerByMerchantCode");
@@ -44,8 +44,8 @@ public class GetCustomerByMerchantCodeUnitTest
     public async Task 取得餘額()
     {
         var apiUrl = new Uri("https://wallet.bti.bet/");
-        var agentUserName = "PegaGaming";
-        var agentPassword = "lQH8635mmocK";
+        var agentUserName = "PegaGaming_GPIRMB";
+        var agentPassword = "IM60Ho7Y4B9C";
         var merchantCustomerCode = "test";
 
         var url = new Uri(apiUrl, "/api/walletservice/WHLCustomers/GetCustomerByMerchantCode");
@@ -76,8 +76,8 @@ public class GetCustomerByMerchantCodeUnitTest
     public async Task 其他錯誤()
     {
         var apiUrl = new Uri("https://wallet.bti.bet/");
-        var agentUserName = "PegaGaming";
-        var agentPassword = "lQH8635mmocK";
+        var agentUserName = "PegaGaming_GPIRMB";
+        var agentPassword = "IM60Ho7Y4B9C";
         var merchantCustomerCode = "test";
 
         var url = new Uri(apiUrl, "/api/walletservice/WHLCustomers/GetCustomerByMerchantCode");
