@@ -15,7 +15,7 @@ public class TransferToWHLUnitTest
         var apiUrl = new Uri("https://wallet.bti.bet/");
         var agentUserName = "PegaGaming_GPIRMB";
         var agentPassword = "IM60Ho7Y4B9C";
-        var merchantCustomerCode = "test";
+        var merchantCustomerCode = "4ucmqplxb029";
         var refTransactionCode = Guid.NewGuid().ToString("N");
         var amount = 10m;
         var transactionId = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
@@ -54,7 +54,7 @@ public class TransferToWHLUnitTest
         var apiUrl = new Uri("https://wallet.bti.bet/");
         var agentUserName = "PegaGaming_GPIRMB";
         var agentPassword = "IM60Ho7Y4B9C";
-        var merchantCustomerCode = "test";
+        var merchantCustomerCode = "4ucmqplxb029";
         var refTransactionCode = Guid.NewGuid().ToString("N");
         var amount = 10m;
 

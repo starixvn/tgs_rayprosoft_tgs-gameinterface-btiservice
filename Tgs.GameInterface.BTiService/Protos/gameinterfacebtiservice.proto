@@ -15,7 +15,6 @@ service  GameInterfaceBTiService{
   rpc FundOrderChecking(FundOrderCheckingRequest) returns (FundOrderCheckingReply);
   rpc FundOut (FundRequest) returns (FundReply);
   rpc GetBalance (BalanceRequest) returns (BalanceReply);  
-  rpc GetGameUrl (GameUrlRequest) returns (GameUrlReply);
   rpc GetGamePullRecord (GamePullRecordRequest) returns (GamePullRecordReply);
 }
 
@@ -54,19 +53,9 @@ message CreatePlayerRequest {
 	string api_url = 1;
 	string agent_user_name = 2;
 	string agent_password = 3;
-	string player_code = 4;
-	string currency = 5;
-}
-
-message GameUrlRequest {
-	string api_url = 1;
-	string agent_user_name = 2;
-	string agent_password = 3;
-	string player_code = 4;
-	string external_game_id = 5;
-	string language = 6;
-	string currency = 7;
-	bool is_mobile = 8;
+	string brand = 4;
+	string player_code = 5;
+	string currency = 6;
 }
 
 message GamePullRecordRequest {
@@ -98,13 +87,6 @@ message BalanceReply {
 	string message = 2;
 	bool is_player_exist = 3;
 	phoenix.protobuf.DecimalValue balance = 4;
-}
-
-message GameUrlReply {
-	bool success = 1;
-	string message = 2;
-	bool is_player_exist = 3;
-	string game_url = 4;
 }
 
 message GamePullRecordReply {

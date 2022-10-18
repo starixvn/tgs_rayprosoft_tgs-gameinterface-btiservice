@@ -1,3 +1,5 @@
 ﻿namespace Tgs.GameInterface.BTiService.Core.Models;
 
-public record GetCustomerAuthTokenResult(string authToken);
+public record GetCustomerAuthTokenResult(
+    bool IsPlayerExist,
+    string AuthToken);

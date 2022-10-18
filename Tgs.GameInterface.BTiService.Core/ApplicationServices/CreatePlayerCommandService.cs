@@ -16,7 +16,7 @@ internal class CreatePlayerCommandService : ICommandService<CreatePlayerCommand>
         _client = client ?? throw new ArgumentNullException(nameof(client));
     }
 
-    public async ValueTask ExecuteAsync(CreatePlayerCommand command, CancellationToken cancellationToken = default)
+    public ValueTask ExecuteAsync(CreatePlayerCommand command, CancellationToken cancellationToken = default)
     {
         var mapping = _gameInterfaceSetting
             .CurrencyMappings
@@ -26,17 +26,22 @@ internal class CreatePlayerCommandService : ICommandService<CreatePlayerCommand>
             {
                 CurrencyCode = command.Currency,
                 CountryCode = "CN",
-                LanguageCode = "zh-cn",
+                LanguageCode = "zh",
+                DisplayName = "China",
+                City = "Beijing"
             };
 
-        await _client.CreateNewUserAsync(
-            command.ApiUrl,
-            command.AgentUserName,
-            command.AgentPassword,
-            command.PlayerCode,
-            command.Currency,
-            mapping.CountryCode,
-            mapping.LanguageCode,
+        return _client.CreateNewUserAsync(
+            apiUrl: command.ApiUrl,
+            agentUserName: command.AgentUserName,
+            agentPassword: command.AgentPassword,
+            merchantCustomerCode: command.PlayerCode,
+            currencyCode: command.Currency,
+            firstName: command.Brand,
+            lastName: command.PlayerCode,
+            countryCode: mapping.CountryCode,
+            city: mapping.City,
+            customerDefaultLanguage: mapping.LanguageCode,
             cancellationToken);
     }
 }

@@ -13,7 +13,6 @@ public class GameInterfaceBTiGrpcService : GameInterfaceBTiService.GameInterface
     private readonly IGetService<FundOrderCheckingQuery, bool> _fundOrderCheckingService;
     private readonly IGetService<FundOutQuery, FundResult> _fundOutService;
     private readonly IQueryService<GameRecordQuery, GameRecordResult> _gameRecordService;
-    private readonly IGetService<GameUrlQuery, GameUrlResult> _gameUrlService;
 
     public GameInterfaceBTiGrpcService(
          IGetService<BalanceQuery, BalanceResult> balanceService,
@@ -21,8 +20,7 @@ public class GameInterfaceBTiGrpcService : GameInterfaceBTiService.GameInterface
          IGetService<FundInQuery, FundResult> fundInService,
          IGetService<FundOrderCheckingQuery, bool> fundOrderCheckingService,
          IGetService<FundOutQuery, FundResult> fundOutService,
-         IQueryService<GameRecordQuery, GameRecordResult> gameRecordService,
-         IGetService<GameUrlQuery, GameUrlResult> gameUrlService)
+         IQueryService<GameRecordQuery, GameRecordResult> gameRecordService)
     {
         _balanceService = balanceService ?? throw new ArgumentNullException(nameof(balanceService));
         _createPlayerService = createPlayerService ?? throw new ArgumentNullException(nameof(createPlayerService));
@@ -30,7 +28,6 @@ public class GameInterfaceBTiGrpcService : GameInterfaceBTiService.GameInterface
         _fundOrderCheckingService = fundOrderCheckingService ?? throw new ArgumentNullException(nameof(fundOrderCheckingService));
         _fundOutService = fundOutService ?? throw new ArgumentNullException(nameof(fundOutService));
         _gameRecordService = gameRecordService ?? throw new ArgumentNullException(nameof(gameRecordService));
-        _gameUrlService = gameUrlService ?? throw new ArgumentNullException(nameof(gameUrlService));
     }
 
     public override async Task<Reply> CreatePlayer(CreatePlayerRequest request, ServerCallContext context)
@@ -39,6 +36,7 @@ public class GameInterfaceBTiGrpcService : GameInterfaceBTiService.GameInterface
             ApiUrl: new(request.ApiUrl),
             AgentUserName: request.AgentUserName,
             AgentPassword: request.AgentPassword,
+            Brand: request.Brand,
             PlayerCode: request.PlayerCode,
             Currency: request.Currency)).ConfigureAwait(false);
 
@@ -149,26 +147,5 @@ public class GameInterfaceBTiGrpcService : GameInterfaceBTiService.GameInterface
         };
 
         return reply;
-    }
-
-    public override async Task<GameUrlReply> GetGameUrl(GameUrlRequest request, ServerCallContext context)
-    {
-        var result = await _gameUrlService.GetAsync(new GameUrlQuery(
-             ApiUrl: new(request.ApiUrl),
-             AgentUserName: request.AgentUserName,
-             AgentPassword: request.AgentPassword,
-             PlayerCode: request.PlayerCode,
-             ExternalGameId: request.ExternalGameId,
-             Language: request.Language,
-             Currency: request.Currency,
-             IsMobile: request.IsMobile)).ConfigureAwait(false);
-
-        return new GameUrlReply()
-        {
-            Success = result.Success,
-            Message = result.Message ?? string.Empty,
-            IsPlayerExist = result.IsPlayerExist,
-            GameUrl = result.GameUrl
-        };
     }
 }

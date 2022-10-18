@@ -17,6 +17,7 @@ public class BTiController : ControllerBase
             ApiUrl: model.ApiUrl,
             AgentUserName: model.AgentUserName,
             AgentPassword: model.AgentPassword,
+            Brand: model.Brand,
             PlayerCode: model.PlayerCode,
             Currency: model.Currency));
 
@@ -64,29 +65,6 @@ public class BTiController : ControllerBase
         return new FundResultViewModel(
             result.TransactionId,
             result.Balance);
-    }
-
-    [HttpPost("gameurl")]
-    public async ValueTask<GameUrlResultViewModel> GameUrlAsync(
-        [FromServices] IGetService<GameUrlQuery, GameUrlResult> service,
-        GameUrlQueryViewModel model)
-    {
-        var result = await service.GetAsync(new GameUrlQuery(
-            ApiUrl: model.ApiUrl,
-            AgentUserName: model.AgentUserName,
-            AgentPassword: model.AgentPassword,
-            PlayerCode: model.PlayerCode,
-            ExternalGameId: model.ExternalGameId,
-            Language: model.Language,
-            Currency: model.Currency,
-            IsMobile: model.IsMobile
-            )).ConfigureAwait(false);
-
-        return new GameUrlResultViewModel(
-            Success: result.Success,
-            Message: result.Message,
-            IsPlayerExist: result.IsPlayerExist,
-            GameUrl: result.GameUrl);
     }
 
     [HttpPost("balance")]
