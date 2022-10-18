@@ -128,20 +128,16 @@ internal class GameApiClient : IGameApiClient
         {
             return errorCode is null || !errorCode.Equals("CustomerNotFound", StringComparison.OrdinalIgnoreCase)
                 ? throw new GameProviderResponseErrorException(errorCode)
-                : new GetBalanceResult()
-                {
-                    IsPlayerExist = false,
-                    Balance = 0
-                };
+                : new GetBalanceResult(
+                    IsPlayerExist: false,
+                    Balance: 0);
         }
 
-        var balance = decimal.Parse(xmlDocument.GetElementsByTagName("Balance")[0]?.InnerText ?? throw new Exception());
+        var balance = decimal.Parse(xmlDocument.GetElementsByTagName("Balance")[0]?.InnerText!);
 
-        return new GetBalanceResult()
-        {
-            IsPlayerExist = true,
-            Balance = balance
-        };
+        return new GetBalanceResult(
+                    IsPlayerExist: true,
+                    Balance: balance);
     }
 
     public async ValueTask<GetCustomerAuthTokenResult> GetCustomerAuthTokenAsync(Uri apiUrl, string agentUserName, string agentPassword, string playerCode, CancellationToken cancellationToken = default)
