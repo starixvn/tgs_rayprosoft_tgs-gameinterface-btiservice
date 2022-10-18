@@ -12,12 +12,13 @@ public class CheckTransactionUnitTest
     [TestMethod]
     public async Task 訂單不存在()
     {
-        var apiUrl = new Uri("https://wallet.bti.bet/api/walletservice/WHLCustomers/GetBalance/");
+        var apiUrl = new Uri("https://wallet.bti.bet/");
         var agentUserName = "PegaGaming";
         var agentPassword = "lQH8635mmocK";
         var transactionId = Guid.NewGuid().ToString("N");
+
+        var url = new Uri(apiUrl, "/api/walletservice/WHLCustomers/CheckTransaction");
         var response = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<MerchantResponse xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"http://networkpot.com/\">\r\n    <ErrorCode>TransactionCodeNotFound</ErrorCode>\r\n    <CustomerID>-1</CustomerID>\r\n    <AuthToken />\r\n    <Balance>0</Balance>\r\n    <OpenBetsBalance>0</OpenBetsBalance>\r\n    <TransactionID>-1</TransactionID>\r\n</MerchantResponse>";
-        var url = new Uri(apiUrl, $"/api/walletservice/WHLCustomers/CheckTransaction");
         var handler = new MockHttpMessageHandler();
         _ = handler.Expect(HttpMethod.Post, url.ToString())
                         .Respond(HttpStatusCode.OK, new StringContent(response));
@@ -32,7 +33,7 @@ public class CheckTransactionUnitTest
                 apiUrl: apiUrl,
                 agentUserName: agentUserName,
                 agentPassword: agentPassword,
-                transactionId: transactionId)
+                refTransactionCode: transactionId)
             .ConfigureAwait(false);
 
         Assert.IsNotNull(actual);
@@ -42,12 +43,13 @@ public class CheckTransactionUnitTest
     [TestMethod]
     public async Task 訂單存在()
     {
-        var apiUrl = new Uri("https://wallet.bti.bet/api/walletservice/WHLCustomers/GetBalance/");
+        var apiUrl = new Uri("https://wallet.bti.bet/");
         var agentUserName = "PegaGaming";
         var agentPassword = "lQH8635mmocK";
         var transactionId = Guid.NewGuid().ToString("N");
+
+        var url = new Uri(apiUrl, "/api/walletservice/WHLCustomers/CheckTransaction");
         var response = $"<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<MerchantResponse xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"http://networkpot.com/\">\r\n    <ErrorCode>NoError</ErrorCode>\r\n    <CustomerID>-1</CustomerID>\r\n    <AuthToken />\r\n    <Balance>0</Balance>\r\n    <OpenBetsBalance>0</OpenBetsBalance>\r\n    <TransactionID>{transactionId}</TransactionID>\r\n</MerchantResponse>";
-        var url = new Uri(apiUrl, $"/api/walletservice/WHLCustomers/CheckTransaction");
         var handler = new MockHttpMessageHandler();
         _ = handler.Expect(HttpMethod.Post, url.ToString())
                         .Respond(HttpStatusCode.OK, new StringContent(response));
@@ -62,7 +64,7 @@ public class CheckTransactionUnitTest
                 apiUrl: apiUrl,
                 agentUserName: agentUserName,
                 agentPassword: agentPassword,
-                transactionId: transactionId)
+                refTransactionCode: transactionId)
             .ConfigureAwait(false);
 
         Assert.IsNotNull(actual);
@@ -72,12 +74,13 @@ public class CheckTransactionUnitTest
     [TestMethod]
     public async Task 其他錯誤()
     {
-        var apiUrl = new Uri("https://wallet.bti.bet/api/walletservice/WHLCustomers/GetBalance/");
+        var apiUrl = new Uri("https://wallet.bti.bet/");
         var agentUserName = "PegaGaming";
         var agentPassword = "lQH8635mmocK";
         var transactionId = Guid.NewGuid().ToString("N");
+
+        var url = new Uri(apiUrl, "/api/walletservice/WHLCustomers/CheckTransaction");
         var response = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<MerchantResponse xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"http://networkpot.com/\">\r\n    <ErrorCode>Exception</ErrorCode>\r\n    <CustomerID>-1</CustomerID>\r\n    <AuthToken />\r\n    <Balance>0</Balance>\r\n    <OpenBetsBalance>0</OpenBetsBalance>\r\n    <TransactionID>-1</TransactionID>\r\n</MerchantResponse>";
-        var url = new Uri(apiUrl, $"/api/walletservice/WHLCustomers/CheckTransaction");
         var handler = new MockHttpMessageHandler();
         _ = handler.Expect(HttpMethod.Post, url.ToString())
                         .Respond(HttpStatusCode.OK, new StringContent(response));
@@ -93,7 +96,7 @@ public class CheckTransactionUnitTest
                     apiUrl: apiUrl,
                     agentUserName: agentUserName,
                     agentPassword: agentPassword,
-                    transactionId: transactionId)
+                    refTransactionCode: transactionId)
                 .AsTask())
             .ConfigureAwait(false);
     }

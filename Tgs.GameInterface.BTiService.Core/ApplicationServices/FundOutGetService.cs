@@ -2,7 +2,7 @@
 
 namespace Tgs.GameInterface.BTiService.Core.ApplicationServices;
 
-internal class FundOutGetService : IGetService<FundOutQuery, FundOutResult>
+internal class FundOutGetService : IGetService<FundOutQuery, FundResult>
 {
     private readonly IGameApiClient _client;
 
@@ -11,20 +11,19 @@ internal class FundOutGetService : IGetService<FundOutQuery, FundOutResult>
         _client = client ?? throw new ArgumentNullException(nameof(client));
     }
 
-    public async ValueTask<FundOutResult> GetAsync(FundOutQuery query, CancellationToken cancellationToken = default)
+    public async ValueTask<FundResult> GetAsync(FundOutQuery query, CancellationToken cancellationToken = default)
     {
         var result = await _client.TransferToWHLAsync(
             apiUrl: query.ApiUrl,
             agentUserName: query.AgentUserName,
             agentPassword: query.AgentPassword,
-            playerCode: query.PlayerCode,
-            transactionId: query.TransactionId,
+            merchantCustomerCode: query.PlayerCode,
+            refTransactionCode: query.TransactionId,
             amount: query.Amount,
             cancellationToken: cancellationToken).ConfigureAwait(false);
 
-        return new FundOutResult(
-            Success: result.Success,
+        return new FundResult(
             TransactionId: result.TransactionId.ToString(),
-            BalanceAfter: result.BalanceAfter);
+            Balance: result.Balance);
     }
 }

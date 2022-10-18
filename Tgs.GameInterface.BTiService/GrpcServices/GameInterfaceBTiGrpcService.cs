@@ -9,18 +9,18 @@ public class GameInterfaceBTiGrpcService : GameInterfaceBTiService.GameInterface
 {
     private readonly IGetService<BalanceQuery, BalanceResult> _balanceService;
     private readonly ICommandService<CreatePlayerCommand> _createPlayerService;
-    private readonly IGetService<FundInQuery, FundInResult> _fundInService;
+    private readonly IGetService<FundInQuery, FundResult> _fundInService;
     private readonly IGetService<FundOrderCheckingQuery, bool> _fundOrderCheckingService;
-    private readonly IGetService<FundOutQuery, FundOutResult> _fundOutService;
+    private readonly IGetService<FundOutQuery, FundResult> _fundOutService;
     private readonly IQueryService<GameRecordQuery, GameRecordResult> _gameRecordService;
     private readonly IGetService<GameUrlQuery, GameUrlResult> _gameUrlService;
 
     public GameInterfaceBTiGrpcService(
          IGetService<BalanceQuery, BalanceResult> balanceService,
          ICommandService<CreatePlayerCommand> createPlayerService,
-         IGetService<FundInQuery, FundInResult> fundInService,
+         IGetService<FundInQuery, FundResult> fundInService,
          IGetService<FundOrderCheckingQuery, bool> fundOrderCheckingService,
-         IGetService<FundOutQuery, FundOutResult> fundOutService,
+         IGetService<FundOutQuery, FundResult> fundOutService,
          IQueryService<GameRecordQuery, GameRecordResult> gameRecordService,
          IGetService<GameUrlQuery, GameUrlResult> gameUrlService)
     {
@@ -33,7 +33,7 @@ public class GameInterfaceBTiGrpcService : GameInterfaceBTiService.GameInterface
         _gameUrlService = gameUrlService ?? throw new ArgumentNullException(nameof(gameUrlService));
     }
 
-    public override async Task<GameInterfaceBTiServiceReply> CreatePlayer(GameInterfaceBTiServiceCreatePlayerRequest request, ServerCallContext context)
+    public override async Task<Reply> CreatePlayer(CreatePlayerRequest request, ServerCallContext context)
     {
         await _createPlayerService.ExecuteAsync(new CreatePlayerCommand(
             ApiUrl: new(request.ApiUrl),
@@ -42,13 +42,13 @@ public class GameInterfaceBTiGrpcService : GameInterfaceBTiService.GameInterface
             PlayerCode: request.PlayerCode,
             Currency: request.Currency)).ConfigureAwait(false);
 
-        return new GameInterfaceBTiServiceReply()
+        return new Reply()
         {
             Success = true
         };
     }
 
-    public override async Task<GameInterfaceBTiServiceFundReply> FundIn(GameInterfaceBTiServiceFundRequest request, ServerCallContext context)
+    public override async Task<FundReply> FundIn(FundRequest request, ServerCallContext context)
     {
         var result = await _fundInService.GetAsync(new FundInQuery(
              ApiUrl: new(request.ApiUrl),
@@ -58,15 +58,14 @@ public class GameInterfaceBTiGrpcService : GameInterfaceBTiService.GameInterface
              TransactionId: request.TransactionId,
              Amount: request.Amount)).ConfigureAwait(false);
 
-        return new GameInterfaceBTiServiceFundReply()
+        return new FundReply()
         {
-            Success = result.Success,
             TransactionId = result.TransactionId,
-            BalanceAfter = result.BalanceAfter,
+            Balance = result.Balance,
         };
     }
 
-    public override async Task<GameInterfaceBTiServiceFundOrderCheckingReply> FundOrderChecking(GameInterfaceBTiServiceFundOrderCheckingRequest request, ServerCallContext context)
+    public override async Task<FundOrderCheckingReply> FundOrderChecking(FundOrderCheckingRequest request, ServerCallContext context)
     {
         var result = await _fundOrderCheckingService.GetAsync(new FundOrderCheckingQuery(
              ApiUrl: new(request.ApiUrl),
@@ -74,13 +73,13 @@ public class GameInterfaceBTiGrpcService : GameInterfaceBTiService.GameInterface
              AgentPassword: request.AgentPassword,
              TransactionId: request.TransactionId)).ConfigureAwait(false);
 
-        return new GameInterfaceBTiServiceFundOrderCheckingReply()
+        return new FundOrderCheckingReply()
         {
             Exist = result
         };
     }
 
-    public override async Task<GameInterfaceBTiServiceFundReply> FundOut(GameInterfaceBTiServiceFundRequest request, ServerCallContext context)
+    public override async Task<FundReply> FundOut(FundRequest request, ServerCallContext context)
     {
         var result = await _fundOutService.GetAsync(new FundOutQuery(
              ApiUrl: new(request.ApiUrl),
@@ -90,15 +89,14 @@ public class GameInterfaceBTiGrpcService : GameInterfaceBTiService.GameInterface
              TransactionId: request.TransactionId,
              Amount: request.Amount)).ConfigureAwait(false);
 
-        return new GameInterfaceBTiServiceFundReply()
+        return new FundReply()
         {
-            Success = result.Success,
             TransactionId = result.TransactionId,
-            BalanceAfter = result.BalanceAfter,
+            Balance = result.Balance,
         };
     }
 
-    public override async Task<GameInterfaceBTiServiceBalanceReply> GetBalance(GameInterfaceBTiServiceBalanceRequest request, ServerCallContext context)
+    public override async Task<BalanceReply> GetBalance(BalanceRequest request, ServerCallContext context)
     {
         var result = await _balanceService.GetAsync(new BalanceQuery(
              ApiUrl: new(request.ApiUrl),
@@ -106,14 +104,14 @@ public class GameInterfaceBTiGrpcService : GameInterfaceBTiService.GameInterface
              AgentPassword: request.AgentPassword,
              PlayerCode: request.PlayerCode)).ConfigureAwait(false);
 
-        return new GameInterfaceBTiServiceBalanceReply()
+        return new BalanceReply()
         {
             IsPlayerExist = result.IsPlayerExist,
             Balance = result.Balance
         };
     }
 
-    public override async Task<GameInterfaceBTiServiceGamePullRecordReply> GetGamePullRecord(GameInterfaceBTiServiceGamePullRecordRequest request, ServerCallContext context)
+    public override async Task<GamePullRecordReply> GetGamePullRecord(GamePullRecordRequest request, ServerCallContext context)
     {
         var result = await _gameRecordService.QueryAsync(new GameRecordQuery(
             ApiUrl: new(request.ApiUrl),
@@ -124,7 +122,7 @@ public class GameInterfaceBTiGrpcService : GameInterfaceBTiService.GameInterface
             Page: request.Page,
             PageLimit: request.PageLimit)).ToArrayAsync().ConfigureAwait(false);
 
-        var reply = new GameInterfaceBTiServiceGamePullRecordReply();
+        var reply = new GamePullRecordReply();
 
         if (result is null)
         {
@@ -133,7 +131,7 @@ public class GameInterfaceBTiGrpcService : GameInterfaceBTiService.GameInterface
 
         foreach (var transaction in result)
         {
-            reply.Items.Add(new GameInterfaceBTiServiceGamePullRecord()
+            reply.Items.Add(new GamePullRecord()
             {
                 //Account = transaction.Account,
                 //WagersId = transaction.WagersId,
@@ -142,7 +140,7 @@ public class GameInterfaceBTiGrpcService : GameInterfaceBTiService.GameInterface
                 //BetAmount = transaction.BetAmount,
                 //PayoffTime = transaction.PayoffTime.ToTimestamp(),
                 //PayoffAmount = transaction.PayoffAmount,
-                //Status = (GameInterfaceBTiServiceGamePullRecordStatus)transaction.Status,
+                //Status = (GamePullRecordStatus)transaction.Status,
                 //SettlementTime = transaction.SettlementTime.ToTimestamp(),
                 //GameCategoryId = transaction.GameCategoryId,
                 //Type = transaction.Type,
@@ -153,7 +151,7 @@ public class GameInterfaceBTiGrpcService : GameInterfaceBTiService.GameInterface
         return reply;
     }
 
-    public override async Task<GameInterfaceBTiServiceGameUrlReply> GetGameUrl(GameInterfaceBTiServiceGameUrlRequest request, ServerCallContext context)
+    public override async Task<GameUrlReply> GetGameUrl(GameUrlRequest request, ServerCallContext context)
     {
         var result = await _gameUrlService.GetAsync(new GameUrlQuery(
              ApiUrl: new(request.ApiUrl),
@@ -165,7 +163,7 @@ public class GameInterfaceBTiGrpcService : GameInterfaceBTiService.GameInterface
              Currency: request.Currency,
              IsMobile: request.IsMobile)).ConfigureAwait(false);
 
-        return new GameInterfaceBTiServiceGameUrlReply()
+        return new GameUrlReply()
         {
             Success = result.Success,
             Message = result.Message ?? string.Empty,

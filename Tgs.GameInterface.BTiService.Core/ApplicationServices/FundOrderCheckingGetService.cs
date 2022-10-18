@@ -16,6 +16,6 @@ internal class FundOrderCheckingGetService : IGetService<FundOrderCheckingQuery,
             apiUrl: command.ApiUrl,
             agentUserName: command.AgentUserName,
             agentPassword: command.AgentPassword,
-            transactionId: command.TransactionId,
+            refTransactionCode: command.TransactionId,
             cancellationToken: cancellationToken).ConfigureAwait(false);
 }

@@ -22,7 +22,7 @@ public class BTiController : ControllerBase
 
     [HttpPost("fund-in")]
     public async ValueTask<FundResultViewModel> FundInAsync(
-        [FromServices] IGetService<FundInQuery, FundInResult> service,
+        [FromServices] IGetService<FundInQuery, FundResult> service,
         FundQueryViewModel model)
     {
         var result = await service.GetAsync(new FundInQuery(
@@ -34,9 +34,8 @@ public class BTiController : ControllerBase
             Amount: model.Amount)).ConfigureAwait(false);
 
         return new FundResultViewModel(
-            result.Success,
             result.TransactionId,
-            result.BalanceAfter);
+            result.Balance);
     }
 
     [HttpPost("fundorderchecking")]
@@ -51,7 +50,7 @@ public class BTiController : ControllerBase
 
     [HttpPost("fund-out")]
     public async ValueTask<FundResultViewModel> FundOutAsync(
-        [FromServices] IGetService<FundOutQuery, FundOutResult> service,
+        [FromServices] IGetService<FundOutQuery, FundResult> service,
         FundQueryViewModel model)
     {
         var result = await service.GetAsync(new FundOutQuery(
@@ -63,9 +62,8 @@ public class BTiController : ControllerBase
             Amount: model.Amount)).ConfigureAwait(false);
 
         return new FundResultViewModel(
-            result.Success,
             result.TransactionId,
-            result.BalanceAfter);
+            result.Balance);
     }
 
     [HttpPost("gameurl")]

@@ -2,7 +2,7 @@
 
 namespace Tgs.GameInterface.BTiService.Core.ApplicationServices;
 
-internal class FundInGetService : IGetService<FundInQuery, FundInResult>
+internal class FundInGetService : IGetService<FundInQuery, FundResult>
 {
     private readonly IGameApiClient _client;
 
@@ -11,20 +11,19 @@ internal class FundInGetService : IGetService<FundInQuery, FundInResult>
         _client = client ?? throw new ArgumentNullException(nameof(client));
     }
 
-    public async ValueTask<FundInResult> GetAsync(FundInQuery query, CancellationToken cancellationToken = default)
+    public async ValueTask<FundResult> GetAsync(FundInQuery query, CancellationToken cancellationToken = default)
     {
         var result = await _client.TransferFromWHLAsync(
             apiUrl: query.ApiUrl,
             agentUserName: query.AgentUserName,
             agentPassword: query.AgentPassword,
-            playerCode: query.PlayerCode,
-            transactionId: query.TransactionId,
+            merchantCustomerCode: query.PlayerCode,
+            refTransactionCode: query.TransactionId,
             amount: query.Amount,
             cancellationToken: cancellationToken).ConfigureAwait(false);
 
-        return new FundInResult(
-            Success: result.Success,
+        return new FundResult(
             TransactionId: result.TransactionId.ToString(),
-            BalanceAfter: result.BalanceAfter);
+            Balance: result.Balance);
     }
 }

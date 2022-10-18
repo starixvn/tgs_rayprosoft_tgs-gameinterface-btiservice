@@ -23,13 +23,18 @@ internal class GameApiClient : IGameApiClient
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
-    public async ValueTask<bool> CheckTransactionAsync(Uri apiUrl, string agentUserName, string agentPassword, string transactionId, CancellationToken cancellationToken = default)
+    public async ValueTask<bool> CheckTransactionAsync(
+        Uri apiUrl,
+        string agentUserName,
+        string agentPassword,
+        string refTransactionCode,
+        CancellationToken cancellationToken = default)
     {
         var parameters = new Dictionary<string, string>
         {
             ["AgentUserName"] = agentUserName,
             ["AgentPassword"] = agentPassword,
-            ["RefTransactionCode"] = transactionId,
+            ["RefTransactionCode"] = refTransactionCode
         };
 
         var url = new Uri(apiUrl, "/api/walletservice/WHLCustomers/CheckTransaction");
@@ -94,13 +99,18 @@ internal class GameApiClient : IGameApiClient
         var customerID = int.Parse(xmlDocument["CustomerID"]?.ToString() ?? throw new Exception());
     }
 
-    public async ValueTask<GetBalanceResult> GetBalanceAsync(Uri apiUrl, string agentUserName, string agentPassword, string playerCode, CancellationToken cancellationToken = default)
+    public async ValueTask<GetBalanceResult> GetBalanceAsync(
+        Uri apiUrl,
+        string agentUserName,
+        string agentPassword,
+        string merchantCustomerCode,
+        CancellationToken cancellationToken = default)
     {
         var parameters = new Dictionary<string, string>
         {
             ["AgentUserName"] = agentUserName,
             ["AgentPassword"] = agentPassword,
-            ["MerchantCustomerCode"] = playerCode,
+            ["MerchantCustomerCode"] = merchantCustomerCode,
         };
 
         var url = new Uri(apiUrl, "/api/walletservice/WHLCustomers/GetBalance");
@@ -220,63 +230,84 @@ internal class GameApiClient : IGameApiClient
         });
     }
 
-    public async ValueTask<TransferFromWHLResult> TransferFromWHLAsync(Uri apiUrl, string agentUserName, string agentPassword, string playerCode, decimal amount, string transactionId, CancellationToken cancellationToken = default)
+    public async ValueTask<TransferWHLResult> TransferFromWHLAsync(
+        Uri apiUrl,
+        string agentUserName,
+        string agentPassword,
+        string merchantCustomerCode,
+        string refTransactionCode,
+        decimal amount,
+        CancellationToken cancellationToken = default)
     {
         var parameters = new Dictionary<string, string>
         {
             ["AgentUserName"] = agentUserName,
             ["AgentPassword"] = agentPassword,
-            ["MerchantCustomerCode"] = playerCode,
-            ["Amount"] = amount.ToString(),
-            ["RefTransactionCode"] = transactionId,
+            ["MerchantCustomerCode"] = merchantCustomerCode,
+            ["RefTransactionCode"] = refTransactionCode,
+            ["Amount"] = amount.ToString()
         };
 
+        var url = new Uri(apiUrl, "/api/walletservice/WHLCustomers/TransferFromWHL");
+
         var xmlDocument = await PostAsync(
-            apiUrl,
-            "TransferFromWHL",
+            url,
             parameters,
             "TransferFromWHL",
             cancellationToken).ConfigureAwait(false);
 
-        if (xmlDocument["ErrorCode"]?.ToString() is null or not "NoError")
+        var errorCode = xmlDocument.GetElementsByTagName("ErrorCode")[0]?.InnerText;
+
+        if (errorCode is null
+            || !errorCode.Equals("NoError", StringComparison.OrdinalIgnoreCase))
         {
-            throw new GameProviderResponseErrorException(xmlDocument["ErrorCode"]?.ToString());
+            throw new GameProviderResponseErrorException(errorCode);
         }
 
-        var balance = decimal.Parse(xmlDocument["Balance"]?.ToString() ?? throw new Exception());
-        var transactionID = int.Parse(xmlDocument["TransactionID"]?.ToString() ?? throw new Exception());
+        var balance = decimal.Parse(xmlDocument.GetElementsByTagName("Balance")[0]?.InnerText ?? throw new Exception());
+        var transactionID = xmlDocument.GetElementsByTagName("TransactionID")[0]?.InnerText ?? throw new Exception("取得交易單號是空的");
 
-        return new TransferFromWHLResult(true, transactionID, balance);
+        return new TransferWHLResult(refTransactionCode, transactionID, balance);
     }
 
-    public async ValueTask<TransferToWHLResult> TransferToWHLAsync(Uri apiUrl, string agentUserName, string agentPassword, string playerCode, decimal amount, string transactionId, CancellationToken cancellationToken = default)
+    public async ValueTask<TransferWHLResult> TransferToWHLAsync(
+        Uri apiUrl,
+        string agentUserName,
+        string agentPassword,
+        string merchantCustomerCode,
+        string refTransactionCode,
+        decimal amount,
+        CancellationToken cancellationToken = default)
     {
         var parameters = new Dictionary<string, string>
         {
             ["AgentUserName"] = agentUserName,
             ["AgentPassword"] = agentPassword,
-            ["MerchantCustomerCode"] = playerCode,
-            ["Amount"] = amount.ToString(),
-            ["RefTransactionCode"] = transactionId,
-            ["BonusCode"] = "",
+            ["MerchantCustomerCode"] = merchantCustomerCode,
+            ["RefTransactionCode"] = refTransactionCode,
+            ["Amount"] = amount.ToString()
         };
 
+        var url = new Uri(apiUrl, "/api/walletservice/WHLCustomers/TransferToWHL");
+
         var xmlDocument = await PostAsync(
-            apiUrl,
-            "TransferToWHL",
+            url,
             parameters,
             "TransferToWHL",
             cancellationToken).ConfigureAwait(false);
 
-        if (xmlDocument["ErrorCode"]?.ToString() is null or not "NoError")
+        var errorCode = xmlDocument.GetElementsByTagName("ErrorCode")[0]?.InnerText;
+
+        if (errorCode is null
+            || !errorCode.Equals("NoError", StringComparison.OrdinalIgnoreCase))
         {
-            throw new GameProviderResponseErrorException(xmlDocument["ErrorCode"]?.ToString());
+            throw new GameProviderResponseErrorException(errorCode);
         }
 
-        var balance = decimal.Parse(xmlDocument["Balance"]?.ToString() ?? throw new Exception());
-        var transactionID = int.Parse(xmlDocument["TransactionID"]?.ToString() ?? throw new Exception());
+        var balance = decimal.Parse(xmlDocument.GetElementsByTagName("Balance")[0]?.InnerText ?? throw new Exception());
+        var transactionID = xmlDocument.GetElementsByTagName("TransactionID")[0]?.InnerText ?? throw new Exception("取得交易單號是空的");
 
-        return new TransferToWHLResult(true, transactionID, balance);
+        return new TransferWHLResult(refTransactionCode, transactionID, balance);
     }
 
     private async ValueTask<XmlDocument> PostAsync(Uri apiUrl, string path, IEnumerable<KeyValuePair<string, string>> parameters, string logPrefix, CancellationToken cancellationToken = default)

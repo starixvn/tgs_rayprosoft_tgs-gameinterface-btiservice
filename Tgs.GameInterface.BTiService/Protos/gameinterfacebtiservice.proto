@@ -8,19 +8,19 @@ option csharp_namespace = "Tgs.GameInterface.BTiService.Protos";
 package GameInterfaceBTiService;
 
 // The greeting service definition.
-service GameInterfaceBTiService {
+service  GameInterfaceBTiService{
   // Sends a greeting
-  rpc CreatePlayer (GameInterfaceBTiServiceCreatePlayerRequest) returns (GameInterfaceBTiServiceReply);
-  rpc FundIn (GameInterfaceBTiServiceFundRequest) returns (GameInterfaceBTiServiceFundReply);
-  rpc FundOrderChecking(GameInterfaceBTiServiceFundOrderCheckingRequest) returns (GameInterfaceBTiServiceFundOrderCheckingReply);
-  rpc FundOut (GameInterfaceBTiServiceFundRequest) returns (GameInterfaceBTiServiceFundReply);
-  rpc GetBalance (GameInterfaceBTiServiceBalanceRequest) returns (GameInterfaceBTiServiceBalanceReply);  
-  rpc GetGameUrl (GameInterfaceBTiServiceGameUrlRequest) returns (GameInterfaceBTiServiceGameUrlReply);
-  rpc GetGamePullRecord (GameInterfaceBTiServiceGamePullRecordRequest) returns (GameInterfaceBTiServiceGamePullRecordReply);
+  rpc CreatePlayer (CreatePlayerRequest) returns (Reply);
+  rpc FundIn (FundRequest) returns (FundReply);
+  rpc FundOrderChecking(FundOrderCheckingRequest) returns (FundOrderCheckingReply);
+  rpc FundOut (FundRequest) returns (FundReply);
+  rpc GetBalance (BalanceRequest) returns (BalanceReply);  
+  rpc GetGameUrl (GameUrlRequest) returns (GameUrlReply);
+  rpc GetGamePullRecord (GamePullRecordRequest) returns (GamePullRecordReply);
 }
 
 // The request message containing the user's name.
-message GameInterfaceBTiServiceFundRequest {
+message FundRequest {
 	string api_url = 1;
 	string agent_user_name = 2;
 	string agent_password = 3;
@@ -29,28 +29,28 @@ message GameInterfaceBTiServiceFundRequest {
 	phoenix.protobuf.DecimalValue amount = 6;
 }
 
-message GameInterfaceBTiServiceFundOrderCheckingRequest {
+message FundOrderCheckingRequest {
 	string api_url = 1;
 	string agent_user_name = 2;
 	string agent_password = 3;
 	string transaction_id = 4;
 }
 
-message GameInterfaceBTiServiceBalanceRequest {
+message BalanceRequest {
 	string api_url = 1;
 	string agent_user_name = 2;
 	string agent_password = 3;
 	string player_code = 4;
 }
 
-message GameInterfaceBTiServiceKickPlayerRequest {
+message KickPlayerRequest {
 	string api_url = 1;
 	string agent_user_name = 2;
 	string agent_password = 3;
 	string player_code = 4;
 }
 
-message GameInterfaceBTiServiceCreatePlayerRequest {
+message CreatePlayerRequest {
 	string api_url = 1;
 	string agent_user_name = 2;
 	string agent_password = 3;
@@ -58,7 +58,7 @@ message GameInterfaceBTiServiceCreatePlayerRequest {
 	string currency = 5;
 }
 
-message GameInterfaceBTiServiceGameUrlRequest {
+message GameUrlRequest {
 	string api_url = 1;
 	string agent_user_name = 2;
 	string agent_password = 3;
@@ -69,7 +69,7 @@ message GameInterfaceBTiServiceGameUrlRequest {
 	bool is_mobile = 8;
 }
 
-message GameInterfaceBTiServiceGamePullRecordRequest {
+message GamePullRecordRequest {
 	string api_url = 1;
 	string agent_user_name = 2;
 	string agent_password = 3;
@@ -80,39 +80,37 @@ message GameInterfaceBTiServiceGamePullRecordRequest {
 }
 
 // The response message containing the greetings.
-message GameInterfaceBTiServiceReply {
+message Reply {
 	bool success = 1;
 }
 
-message GameInterfaceBTiServiceFundReply {
-	bool success = 1;
-	string message = 2;
-	string transaction_id = 3;	
-	phoenix.protobuf.DecimalValue balance_after = 4;
+message FundReply {
+	string transaction_id = 1;	
+	phoenix.protobuf.DecimalValue balance = 2;
 }
 
-message GameInterfaceBTiServiceFundOrderCheckingReply {
+message FundOrderCheckingReply {
 	bool exist = 1;
 }
 
-message GameInterfaceBTiServiceBalanceReply {
+message BalanceReply {
 	bool success = 1;
 	string message = 2;
 	bool is_player_exist = 3;
 	phoenix.protobuf.DecimalValue balance = 4;
 }
 
-message GameInterfaceBTiServiceGameUrlReply {
+message GameUrlReply {
 	bool success = 1;
 	string message = 2;
 	bool is_player_exist = 3;
 	string game_url = 4;
 }
 
-message GameInterfaceBTiServiceGamePullRecordReply {
-	repeated GameInterfaceBTiServiceGamePullRecord items = 1;
+message GamePullRecordReply {
+	repeated GamePullRecord items = 1;
 }
 
-message GameInterfaceBTiServiceGamePullRecord {
+message GamePullRecord {
 	
 }

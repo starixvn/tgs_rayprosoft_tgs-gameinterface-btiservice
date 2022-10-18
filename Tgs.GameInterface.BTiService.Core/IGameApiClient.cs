@@ -8,7 +8,7 @@ public interface IGameApiClient
         Uri apiUrl,
         string agentUserName,
         string agentPassword,
-        string transactionId,
+        string refTransactionCode,
         CancellationToken cancellationToken = default);
 
     ValueTask CreateNewUserAsync(
@@ -50,23 +50,37 @@ public interface IGameApiClient
     /// <param name="apiUrl">The API URL.</param>
     /// <param name="agentUserName">Name of the agent user.</param>
     /// <param name="agentPassword">The agent password.</param>
-    /// <param name="playerCode">The player code.</param>
+    /// <param name="merchantCustomerCode">The merchant customer code.</param>
+    /// <param name="refTransactionCode">The reference transaction code.</param>
     /// <param name="amount">The amount.</param>
-    /// <param name="transactionId">The transaction identifier.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns></returns>
-    ValueTask<TransferFromWHLResult> TransferFromWHLAsync(Uri apiUrl, string agentUserName, string agentPassword, string playerCode, decimal amount, string transactionId, CancellationToken cancellationToken = default);
+    ValueTask<TransferWHLResult> TransferFromWHLAsync(
+        Uri apiUrl,
+        string agentUserName,
+        string agentPassword,
+        string merchantCustomerCode,
+        string refTransactionCode,
+        decimal amount,
+        CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// (Tgs -> GP) Transfers to WHL.
+    /// (Tgs -> GP) Transfers to WHL asynchronous.
     /// </summary>
     /// <param name="apiUrl">The API URL.</param>
     /// <param name="agentUserName">Name of the agent user.</param>
     /// <param name="agentPassword">The agent password.</param>
-    /// <param name="playerCode">The player code.</param>
+    /// <param name="merchantCustomerCode">The merchant customer code.</param>
+    /// <param name="refTransactionCode">The reference transaction code.</param>
     /// <param name="amount">The amount.</param>
-    /// <param name="transactionId">The transaction identifier.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns></returns>
-    ValueTask<TransferToWHLResult> TransferToWHLAsync(Uri apiUrl, string agentUserName, string agentPassword, string playerCode, decimal amount, string transactionId, CancellationToken cancellationToken = default);
+    ValueTask<TransferWHLResult> TransferToWHLAsync(
+        Uri apiUrl,
+        string agentUserName,
+        string agentPassword,
+        string merchantCustomerCode,
+        string refTransactionCode,
+        decimal amount,
+        CancellationToken cancellationToken = default);
 }
