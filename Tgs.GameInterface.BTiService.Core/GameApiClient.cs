@@ -99,11 +99,11 @@ internal class GameApiClient : IGameApiClient
         var customerID = int.Parse(xmlDocument["CustomerID"]?.ToString() ?? throw new Exception());
     }
 
-    public async ValueTask<GetBalanceResult> GetBalanceAsync(
-        Uri apiUrl,
+    public async ValueTask<GetCustomerAuthTokenResult> GetCustomerAuthTokenAsync(
+        Uri apiUrl, 
         string agentUserName,
-        string agentPassword,
-        string merchantCustomerCode,
+        string agentPassword, 
+        string merchantCustomerCode, 
         CancellationToken cancellationToken = default)
     {
         var parameters = new Dictionary<string, string>
@@ -111,42 +111,6 @@ internal class GameApiClient : IGameApiClient
             ["AgentUserName"] = agentUserName,
             ["AgentPassword"] = agentPassword,
             ["MerchantCustomerCode"] = merchantCustomerCode,
-        };
-
-        var url = new Uri(apiUrl, "/api/walletservice/WHLCustomers/GetBalance");
-
-        var xmlDocument = await PostAsync(
-            url,
-            parameters,
-            "GetBalance",
-            cancellationToken).ConfigureAwait(false);
-
-        var errorCode = xmlDocument.GetElementsByTagName("ErrorCode")[0]?.InnerText;
-
-        if (errorCode is null
-            || !errorCode.Equals("NoError", StringComparison.OrdinalIgnoreCase))
-        {
-            return errorCode is null || !errorCode.Equals("CustomerNotFound", StringComparison.OrdinalIgnoreCase)
-                ? throw new GameProviderResponseErrorException(errorCode)
-                : new GetBalanceResult(
-                    IsPlayerExist: false,
-                    Balance: 0);
-        }
-
-        var balance = decimal.Parse(xmlDocument.GetElementsByTagName("Balance")[0]?.InnerText!);
-
-        return new GetBalanceResult(
-                    IsPlayerExist: true,
-                    Balance: balance);
-    }
-
-    public async ValueTask<GetCustomerAuthTokenResult> GetCustomerAuthTokenAsync(Uri apiUrl, string agentUserName, string agentPassword, string playerCode, CancellationToken cancellationToken = default)
-    {
-        var parameters = new Dictionary<string, string>
-        {
-            ["AgentUserName"] = agentUserName,
-            ["AgentPassword"] = agentPassword,
-            ["MerchantCustomerCode"] = playerCode,
         };
 
         var xmlDocument = await PostAsync(
@@ -164,31 +128,45 @@ internal class GameApiClient : IGameApiClient
         return new GetCustomerAuthTokenResult(xmlDocument["AuthToken"]?.ToString() ?? throw new Exception(""));
     }
 
-    public async ValueTask<GetCustomerByMerchantCodeResult> GetCustomerByMerchantCodeAsync(Uri apiUrl, string agentUserName, string agentPassword, string playerCode, CancellationToken cancellationToken = default)
+    public async ValueTask<GetCustomerByMerchantCodeResult> GetCustomerByMerchantCodeAsync(
+        Uri apiUrl, 
+        string agentUserName, 
+        string agentPassword, 
+        string merchantCustomerCode, 
+        CancellationToken cancellationToken = default)
     {
         var parameters = new Dictionary<string, string>
         {
             ["AgentUserName"] = agentUserName,
             ["AgentPassword"] = agentPassword,
-            ["MerchantCustomerCode"] = playerCode,
+            ["MerchantCustomerCode"] = merchantCustomerCode,
         };
 
+        var url = new Uri(apiUrl, "/api/walletservice/WHLCustomers/GetCustomerByMerchantCode");
+
         var xmlDocument = await PostAsync(
-            apiUrl,
-            "GetCustomerByMerchantCode",
+            url,
             parameters,
             "GetCustomerByMerchantCode",
             cancellationToken).ConfigureAwait(false);
 
-        if (xmlDocument["ErrorCode"]?.ToString() is null or not "NoError")
+        var errorCode = xmlDocument.GetElementsByTagName("ErrorCode")[0]?.InnerText;
+
+        if (errorCode is null
+            || !errorCode.Equals("NoError", StringComparison.OrdinalIgnoreCase))
         {
-            throw new GameProviderResponseErrorException(xmlDocument["ErrorCode"]?.ToString());
+            return errorCode is null || !errorCode.Equals("CustomerNotFound", StringComparison.OrdinalIgnoreCase)
+                ? throw new GameProviderResponseErrorException(errorCode)
+                : new GetCustomerByMerchantCodeResult(
+                    IsPlayerExist: false,
+                    Balance: 0);
         }
 
-        var balance = decimal.Parse(xmlDocument["Balance"]?.ToString() ?? throw new Exception());
-        var customerID = int.Parse(xmlDocument["CustomerID"]?.ToString() ?? throw new Exception());
+        var balance = decimal.Parse(xmlDocument.GetElementsByTagName("Balance")[0]?.InnerText!);
 
-        return new GetCustomerByMerchantCodeResult(true, customerID, balance);
+        return new GetCustomerByMerchantCodeResult(
+                    IsPlayerExist: true,
+                    Balance: balance);
     }
 
     public ValueTask<GetGameUrlResult> GetGameUrlAsync(Uri apiUrl, string operatorToken, bool isMobile, string? oddsStyleId, string? sportId, string? leagueId, string? eventId, string? api, string language = "en", CancellationToken cancellationToken = default)

@@ -15,31 +15,24 @@ public interface IGameApiClient
         Uri apiUrl,
         string agentUserName,
         string agentPassword,
-        string playerCode,
+        string merchantCustomerCode,
         string currencyCode,
         string countryCode,
         string customerDefaultLanguage,
-        CancellationToken cancellationToken = default);
-
-    ValueTask<GetBalanceResult> GetBalanceAsync(
-        Uri apiUrl,
-        string agentUserName,
-        string agentPassword,
-        string playerCode,
         CancellationToken cancellationToken = default);
 
     ValueTask<GetCustomerAuthTokenResult> GetCustomerAuthTokenAsync(
         Uri apiUrl,
         string agentUserName,
         string agentPassword,
-        string playerCode,
+        string merchantCustomerCode,
         CancellationToken cancellationToken = default);
 
     ValueTask<GetCustomerByMerchantCodeResult> GetCustomerByMerchantCodeAsync(
         Uri apiUrl,
         string agentUserName,
         string agentPassword,
-        string playerCode,
+        string merchantCustomerCode,
         CancellationToken cancellationToken = default);
 
     ValueTask<GetGameUrlResult> GetGameUrlAsync(Uri apiUrl, string operatorToken, bool isMobile, string? oddsStyleId, string? sportId, string? leagueId, string? eventId, string? api, string language = "en", CancellationToken cancellationToken = default);

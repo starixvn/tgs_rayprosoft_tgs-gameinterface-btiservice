@@ -2,11 +2,12 @@
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RichardSzalay.MockHttp;
+using Tgs.GameInterface.BTiService.Core.Exceptions;
 
 namespace Tgs.GameInterface.BTiService.Core.UnitTest;
 
 [TestClass]
-public class GetBalanceUnitTest
+public class GetCustomerByMerchantCodeUnitTest
 {
     [TestMethod]
     public async Task 玩家不存在()
@@ -16,7 +17,7 @@ public class GetBalanceUnitTest
         var agentPassword = "lQH8635mmocK";
         var merchantCustomerCode = "test";
 
-        var url = new Uri(apiUrl, "/api/walletservice/WHLCustomers/GetBalance");
+        var url = new Uri(apiUrl, "/api/walletservice/WHLCustomers/GetCustomerByMerchantCode");
         var response = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<MerchantResponse xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"http://networkpot.com/\">\r\n    <ErrorCode>CustomerNotFound</ErrorCode>\r\n    <CustomerID>-1</CustomerID>\r\n    <AuthToken />\r\n    <Balance>0</Balance>\r\n    <OpenBetsBalance>0</OpenBetsBalance>\r\n    <TransactionID>-1</TransactionID>\r\n</MerchantResponse>";
         var handler = new MockHttpMessageHandler();
         _ = handler.Expect(HttpMethod.Post, url.ToString())
@@ -28,7 +29,7 @@ public class GetBalanceUnitTest
         var sut = new GameApiClient(fakeHttpClient, fakeLog);
 
         var actual = await sut
-            .GetBalanceAsync(
+            .GetCustomerByMerchantCodeAsync(
                 apiUrl: apiUrl,
                 agentUserName: agentUserName,
                 agentPassword: agentPassword,
@@ -47,7 +48,7 @@ public class GetBalanceUnitTest
         var agentPassword = "lQH8635mmocK";
         var merchantCustomerCode = "test";
 
-        var url = new Uri(apiUrl, "/api/walletservice/WHLCustomers/GetBalance");
+        var url = new Uri(apiUrl, "/api/walletservice/WHLCustomers/GetCustomerByMerchantCode");
         var response = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<MerchantResponse xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"http://networkpot.com/\">\r\n    <ErrorCode>NoError</ErrorCode>\r\n    <CustomerID>1</CustomerID>\r\n    <AuthToken />\r\n    <Balance>100</Balance>\r\n    <OpenBetsBalance>0</OpenBetsBalance>\r\n    <TransactionID>-1</TransactionID>\r\n</MerchantResponse>";
         var handler = new MockHttpMessageHandler();
         _ = handler.Expect(HttpMethod.Post, url.ToString())
@@ -59,7 +60,7 @@ public class GetBalanceUnitTest
         var sut = new GameApiClient(fakeHttpClient, fakeLog);
 
         var actual = await sut
-            .GetBalanceAsync(
+            .GetCustomerByMerchantCodeAsync(
                 apiUrl: apiUrl,
                 agentUserName: agentUserName,
                 agentPassword: agentPassword,
@@ -69,5 +70,35 @@ public class GetBalanceUnitTest
         Assert.IsNotNull(actual);
         Assert.IsTrue(actual.IsPlayerExist);
         Assert.AreEqual(100m, actual.Balance);
+    }
+
+    [TestMethod]
+    public async Task 其他錯誤()
+    {
+        var apiUrl = new Uri("https://wallet.bti.bet/");
+        var agentUserName = "PegaGaming";
+        var agentPassword = "lQH8635mmocK";
+        var merchantCustomerCode = "test";
+
+        var url = new Uri(apiUrl, "/api/walletservice/WHLCustomers/GetCustomerByMerchantCode");
+        var response = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<MerchantResponse xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"http://networkpot.com/\">\r\n    <ErrorCode>Exception</ErrorCode>\r\n    <CustomerID>-1</CustomerID>\r\n    <AuthToken />\r\n    <Balance>0</Balance>\r\n    <OpenBetsBalance>0</OpenBetsBalance>\r\n    <TransactionID>-1</TransactionID>\r\n</MerchantResponse>";
+        var handler = new MockHttpMessageHandler();
+        _ = handler.Expect(HttpMethod.Post, url.ToString())
+                        .Respond(HttpStatusCode.OK, new StringContent(response));
+
+        var fakeHttpClient = handler.ToHttpClient();
+        var fakeLog = NullLogger<GameApiClient>.Instance;
+
+        var sut = new GameApiClient(fakeHttpClient, fakeLog);
+
+        _ = await Assert
+            .ThrowsExceptionAsync<GameProviderResponseErrorException>(() =>
+                sut.GetCustomerByMerchantCodeAsync(
+                    apiUrl: apiUrl,
+                    agentUserName: agentUserName,
+                    agentPassword: agentPassword,
+                    merchantCustomerCode: merchantCustomerCode)
+                .AsTask())
+            .ConfigureAwait(false);
     }
 }

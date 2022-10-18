@@ -13,12 +13,12 @@ internal class BalanceGetService : IGetService<BalanceQuery, BalanceResult>
 
     public async ValueTask<BalanceResult> GetAsync(BalanceQuery query, CancellationToken cancellationToken = default)
     {
-        var result = await _client.GetBalanceAsync(
-            query.ApiUrl,
-            query.AgentUserName,
-            query.AgentPassword,
-            query.PlayerCode,
-            cancellationToken).ConfigureAwait(false);
+        var result = await _client.GetCustomerByMerchantCodeAsync(
+            apiUrl: query.ApiUrl,
+            agentUserName: query.AgentUserName,
+            agentPassword: query.AgentPassword,
+            merchantCustomerCode: query.PlayerCode,
+            cancellationToken: cancellationToken).ConfigureAwait(false);
 
         return new BalanceResult(
              IsPlayerExist: result.IsPlayerExist,
