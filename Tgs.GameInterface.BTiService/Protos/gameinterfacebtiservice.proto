@@ -1,0 +1,151 @@
+syntax = "proto3";
+
+import "phoenix/protobuf/decimal.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Tgs.GameInterface.BTiService.Protos";
+
+package GameInterfaceBTiService;
+
+// The greeting service definition.
+service  GameInterfaceBTiService{
+  // Sends a greeting
+  rpc PlayerCreate (PlayerCreateRequest) returns (BaseReply);
+  rpc PlayerBalance (PlayerBalanceRequest) returns (PlayerBalanceReply);  
+  rpc FundIn (FundRequest) returns (FundReply);
+  rpc FundOut (FundRequest) returns (FundReply);
+  rpc FundStatus(FundStatusRequest) returns (FundStatusReply);
+  rpc GameHistorySettled (GameHistorySettledRequest) returns (GameHistorySettledReply);
+  rpc GameHistoryUnsettled (GameHistoryUnsettledRequest) returns (GameHistoryUnsettledReply);
+  rpc GameAuthToken (GameAuthTokenRequest) returns (GameAuthTokenReply);
+}
+
+// The request message containing the user's name.
+message FundRequest {
+	string api_url = 1;
+	string agent_user_name = 2;
+	string agent_password = 3;
+	string merchant_customer_code = 4;
+	string ref_transaction_code = 5;
+	phoenix.protobuf.DecimalValue amount = 6;
+}
+
+message FundStatusRequest {
+	string api_url = 1;
+	string agent_user_name = 2;
+	string agent_password = 3;
+	string ref_transaction_code = 4;
+}
+
+message PlayerBalanceRequest {
+	string api_url = 1;
+	string agent_user_name = 2;
+	string agent_password = 3;
+	string merchant_customer_code = 4;
+}
+
+message PlayerCreateRequest {
+	string api_url = 1;
+	string agent_user_name = 2;
+	string agent_password = 3;
+	string brand = 4;
+	string merchant_customer_code = 5;
+	string currency = 6;
+}
+
+message GameHistorySettledRequest {
+	string token_api_url = 1;
+	string history_bets_paging_api_url = 2;
+	string agent_user_name = 3;
+	string agent_password = 4;
+	google.protobuf.Timestamp start_time = 5; 
+	google.protobuf.Timestamp end_time = 6;
+	int32 page = 7;
+	int32 page_limit = 8;
+}
+
+message GameHistoryUnsettledRequest {
+	string token_api_url = 1;
+	string open_bets_api_url = 2;
+	string agent_user_name = 3;
+	string agent_password = 4;
+	google.protobuf.Timestamp start_time = 5; 
+	google.protobuf.Timestamp end_time = 6;
+}
+
+message GameAuthTokenRequest {
+	string api_url = 1;
+	string agent_user_name = 2;
+	string agent_password = 3;
+	string merchant_customer_code = 4;
+}
+
+// The response message containing the greetings.
+message BaseReply{
+	bool status = 1;
+}
+
+message PlayerBalanceReply {
+	bool is_player_exist = 1;
+	phoenix.protobuf.DecimalValue balance = 2;
+}
+
+message FundReply {
+	string ref_transaction_code = 1;
+    string transaction_id = 2;
+    phoenix.protobuf.DecimalValue balance = 3; 
+}
+
+message FundStatusReply {
+	bool is_order_exist = 1;
+}
+
+message GameHistorySettledReply {
+	repeated GameHistorySettled items = 1;
+}
+
+message GameHistorySettled {
+    string player_code = 1;
+    string external_round_id = 2;
+    bool is_closed = 3;
+    GameHistoryStatus status = 4;
+	google.protobuf.Timestamp external_created_on = 5;
+	google.protobuf.Timestamp external_closed_on = 6;
+	phoenix.protobuf.DecimalValue bet = 7;
+	phoenix.protobuf.DecimalValue valid_bet = 8;
+	phoenix.protobuf.DecimalValue player_win_loss = 9;
+	phoenix.protobuf.DecimalValue turnover = 10;
+	phoenix.protobuf.DecimalValue settle = 11;
+    string additional_data = 12;
+}
+
+message GameHistoryUnsettledReply {
+	repeated GameHistoryUnsettled items = 1;
+}
+
+message GameHistoryUnsettled {
+    string player_code = 1;
+    string external_round_id = 2;
+	google.protobuf.Timestamp external_created_on = 3;
+	phoenix.protobuf.DecimalValue bet = 4;
+	phoenix.protobuf.DecimalValue valid_bet = 5;
+    string additional_data = 6;
+}
+
+message GameAuthTokenReply {
+	bool is_player_exist = 1;
+	string auth_token = 2;
+}
+
+enum GameHistoryStatus{
+	GAME_HISTORY_STATUS_UNKNOWN = 0;
+	GAME_HISTORY_STATUS_OPENED = 1;
+	GAME_HISTORY_STATUS_WON = 2;
+	GAME_HISTORY_STATUS_LOST = 3;
+	GAME_HISTORY_STATUS_HALF_WON = 4;
+	GAME_HISTORY_STATUS_HALF_LOST = 5;
+	GAME_HISTORY_STATUS_CANCELED = 6;
+	GAME_HISTORY_STATUS_CASHOUT = 7;
+	GAME_HISTORY_STATUS_DRAW = 8;
+	GAME_HISTORY_STATUS_DECLINED = 9;
+}
