@@ -18,23 +18,20 @@ build-code:
   only:
     - merge_requests
     - main
-  cache:
-    key: Tgs.OpApi.$CI_PIPELINE_ID
+  artifacts:
     untracked: true
+    expire_in: "1 days"
 
 unit-test:
   stage: test
   script:
     - dotnet test -c $BuildConfiguration -l:"junit;LogFilePath=../TestReports/{assembly}-TestReport.xml" --no-restore --no-build
   needs:
-    - build-code
+    - job: build-code
+      artifacts: true
   only:
     - merge_requests
     - main
-  cache:
-    key: Tgs.OpApi.$CI_PIPELINE_ID
-    untracked: true
-    policy: pull
   artifacts:
     when: always
     reports:
