@@ -1,6 +1,6 @@
 ﻿namespace Tgs.GameInterface.BTiService.Core.ApplicationServices;
 
-public record GameGetAuthTokenQuery(
+public record GameAuthTokenQuery(
     Uri ApiUrl,
     string AgentUserName,
     string AgentPassword,

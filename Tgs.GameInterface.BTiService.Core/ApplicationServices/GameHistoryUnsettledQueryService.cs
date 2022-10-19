@@ -28,8 +28,8 @@ internal class GameHistoryUnsettledQueryService : IQueryService<GameHistoryUnset
                 .OpenBetsAsync(
                     apiUrl: query.OpenBetsApiUrl,
                     token: token,
-                    startTime: query.StartTime.UtcDateTime,
-                    endTime: query.EndTime.UtcDateTime,
+                    startTime: query.StartTime,
+                    endTime: query.EndTime,
                     cancellationToken: cancellationToken)
                 .ToArrayAsync(cancellationToken)
                 .ConfigureAwait(false);

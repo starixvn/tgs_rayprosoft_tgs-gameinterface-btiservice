@@ -1,5 +1,5 @@
 ﻿namespace Tgs.GameInterface.BTiService.ViewModels;
 
-public record GameGetAuthTokenResultViewModel(
+public record GameAuthTokenResultViewModel(
     bool IsPlayerExist,
     string AuthToken);

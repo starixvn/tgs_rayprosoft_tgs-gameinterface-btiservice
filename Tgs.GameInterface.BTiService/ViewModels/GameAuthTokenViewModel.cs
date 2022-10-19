@@ -1,6 +1,6 @@
 ﻿namespace Tgs.GameInterface.BTiService.ViewModels;
 
-public record GameGetAuthTokenViewModel(
+public record GameAuthTokenViewModel(
     Uri ApiUrl,
     string AgentUserName,
     string AgentPassword,

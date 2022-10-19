@@ -5,5 +5,5 @@ public record GameHistoryUnsettledViewModel(
     Uri OpenBetsApiUrl,
     string AgentUserName,
     string AgentPassword,
-    DateTimeOffset StartTime,
-    DateTimeOffset EndTime);
+    DateTime StartTime,
+    DateTime EndTime);

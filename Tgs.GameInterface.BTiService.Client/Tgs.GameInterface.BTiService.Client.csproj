@@ -6,14 +6,20 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <None Remove="Protos\gameinterfacebtiservice.proto" />
-  </ItemGroup>
-
+	<PropertyGroup>
+		<Version>0.0.1</Version>
+		<Authors>Raypro</Authors>
+		<Description>Tgs GameInterface BTi Client</Description>
+		<PackageProjectUrl>https://gitlab.com/rayprosoft/tgs-gameinterface-btiservice</PackageProjectUrl>
+		<RepositoryUrl>https://gitlab.com/rayprosoft/tgs-gameinterface-btiservice.git</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageTags>Tgs GameInterface BTiService</PackageTags>
+	</PropertyGroup>
+	
   <ItemGroup>
     <PackageReference Include="Grpc.AspNetCore.Server.Reflection" Version="2.49.0" />
     <PackageReference Include="Grpc.Net.ClientFactory" Version="2.49.0" />
-    <PackageReference Include="Grpc.Tools" Version="2.49.1">
+    <PackageReference Include="Grpc.Tools" Version="2.50.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -21,7 +27,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Protobuf Include="Protos\gameinterfacebtiservice.proto" GrpcServices="Client" />
+    <Protobuf Include="..\Tgs.GameInterface.BTiService\Protos\gameinterfacebtiservice.proto" GrpcServices="Client">
+      <Link>gameinterfacebtiservice.proto</Link>
+    </Protobuf>
   </ItemGroup>
 
 </Project>

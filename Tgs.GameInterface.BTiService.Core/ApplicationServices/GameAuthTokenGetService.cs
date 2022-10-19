@@ -2,16 +2,16 @@
 
 namespace Tgs.GameInterface.BTiService.Core.ApplicationServices;
 
-internal class GameGetAuthTokenGetService : IGetService<GameGetAuthTokenQuery, GameGetAuthTokenResult>
+internal class GameAuthTokenGetService : IGetService<GameAuthTokenQuery, GameAuthTokenResult>
 {
     private readonly IGameApiClient _client;
 
-    public GameGetAuthTokenGetService(IGameApiClient client)
+    public GameAuthTokenGetService(IGameApiClient client)
     {
         _client = client ?? throw new ArgumentNullException(nameof(client));
     }
 
-    public async ValueTask<GameGetAuthTokenResult> GetAsync(GameGetAuthTokenQuery query, CancellationToken cancellationToken = default)
+    public async ValueTask<GameAuthTokenResult> GetAsync(GameAuthTokenQuery query, CancellationToken cancellationToken = default)
     {
         var result = await _client
                 .GetCustomerAuthTokenAsync(
@@ -23,7 +23,7 @@ internal class GameGetAuthTokenGetService : IGetService<GameGetAuthTokenQuery, G
                     )
                 .ConfigureAwait(false);
 
-        return new GameGetAuthTokenResult(
+        return new GameAuthTokenResult(
             IsPlayerExist: result.IsPlayerExist,
             AuthToken: result.AuthToken);
     }

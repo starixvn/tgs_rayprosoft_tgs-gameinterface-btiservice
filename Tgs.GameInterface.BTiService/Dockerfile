@@ -7,11 +7,12 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 ARG BuildConfiguration=Release
+RUN --mount=type=secret,id=nuget,dst=/pat cp /pat ~/.nuget/NuGet/NuGet.Config
+RUN dotnet nuget remove source 'Microsoft Visual Studio Offline Packages' || true
 WORKDIR /src
 COPY ["nuget.config", "."]
 COPY ["Tgs.GameInterface.BTiService/Tgs.GameInterface.BTiService.csproj", "Tgs.GameInterface.BTiService/"]
 COPY ["Tgs.GameInterface.BTiService.Core/Tgs.GameInterface.BTiService.Core.csproj", "Tgs.GameInterface.BTiService.Core/"]
-COPY ["Tgs.GameInterface.BTiService.Repositories/Tgs.GameInterface.BTiService.Repositories.csproj", "Tgs.GameInterface.BTiService.Repositories/"]
 RUN dotnet restore "Tgs.GameInterface.BTiService/Tgs.GameInterface.BTiService.csproj"
 COPY . .
 WORKDIR "/src/Tgs.GameInterface.BTiService"

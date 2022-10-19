@@ -55,39 +55,6 @@ public class BTiController : ControllerBase
     }
 
     /// <summary>
-    /// Funds the status asynchronous.
-    /// </summary>
-    /// <param name="service">The service.</param>
-    /// <param name="source">The source.</param>
-    /// <remarks>
-    /// <b>Example</b><br />
-    ///
-    ///     Post
-    ///
-    ///         {
-    ///             "apiUrl": "https://wallet.bti.bet/",
-    ///             "agentUserName": "PegaGaming_GPIRMB",
-    ///             "agentPassword": "IM60Ho7Y4B9C",
-    ///             "refTransactionCode": "4c640000e84770b57e0e08dab0e9face"
-    ///         }
-    /// </remarks>
-    [HttpPost("fund/Status", Name = "FundStatus")]
-    public ValueTask<bool> FundStatusAsync(
-        [FromServices] IGetService<FundStatusQuery, bool> service,
-        FundStatusViewModel source)
-    {
-        var query = new FundStatusQuery(
-                ApiUrl: source.ApiUrl,
-                AgentUserName: source.AgentUserName,
-                AgentPassword: source.AgentPassword,
-                RefTransactionCode: source.RefTransactionCode);
-
-        return service.GetAsync(
-                query: query,
-                cancellationToken: HttpContext.RequestAborted);
-    }
-
-    /// <summary>
     /// Funds the out asynchronous.
     /// </summary>
     /// <param name="service">The service.</param>
@@ -129,6 +96,39 @@ public class BTiController : ControllerBase
             RefTransactionCode: result.RefTransactionCode,
             TransactionId: result.TransactionId,
             Balance: result.Balance);
+    }
+
+    /// <summary>
+    /// Funds the status asynchronous.
+    /// </summary>
+    /// <param name="service">The service.</param>
+    /// <param name="source">The source.</param>
+    /// <remarks>
+    /// <b>Example</b><br />
+    ///
+    ///     Post
+    ///
+    ///         {
+    ///             "apiUrl": "https://wallet.bti.bet/",
+    ///             "agentUserName": "PegaGaming_GPIRMB",
+    ///             "agentPassword": "IM60Ho7Y4B9C",
+    ///             "refTransactionCode": "4c640000e84770b57e0e08dab0e9face"
+    ///         }
+    /// </remarks>
+    [HttpPost("fund/Status", Name = "FundStatus")]
+    public ValueTask<bool> FundStatusAsync(
+        [FromServices] IGetService<FundStatusQuery, bool> service,
+        FundStatusViewModel source)
+    {
+        var query = new FundStatusQuery(
+                ApiUrl: source.ApiUrl,
+                AgentUserName: source.AgentUserName,
+                AgentPassword: source.AgentPassword,
+                RefTransactionCode: source.RefTransactionCode);
+
+        return service.GetAsync(
+                query: query,
+                cancellationToken: HttpContext.RequestAborted);
     }
 
     /// <summary>
@@ -209,7 +209,7 @@ public class BTiController : ControllerBase
     }
 
     /// <summary>
-    /// Games the get authentication token asynchronous.
+    /// Games the authentication token asynchronous.
     /// </summary>
     /// <param name="service">The service.</param>
     /// <param name="model">The model.</param>
@@ -227,11 +227,11 @@ public class BTiController : ControllerBase
     ///         }
     /// </remarks>
     [HttpPost("game/authtoken", Name = "GameGetAuthToken")]
-    public async ValueTask<GameGetAuthTokenResultViewModel> GameGetAuthTokenAsync(
-            [FromServices] IGetService<GameGetAuthTokenQuery, GameGetAuthTokenResult> service,
-            GameGetAuthTokenViewModel model)
+    public async ValueTask<GameAuthTokenResultViewModel> GameAuthTokenAsync(
+            [FromServices] IGetService<GameAuthTokenQuery, GameAuthTokenResult> service,
+            GameAuthTokenViewModel model)
     {
-        var query = new GameGetAuthTokenQuery(
+        var query = new GameAuthTokenQuery(
             ApiUrl: model.ApiUrl,
             model.AgentUserName,
             model.AgentPassword,
@@ -243,7 +243,7 @@ public class BTiController : ControllerBase
                     cancellationToken: HttpContext.RequestAborted)
                 .ConfigureAwait(false);
 
-        return new GameGetAuthTokenResultViewModel(
+        return new GameAuthTokenResultViewModel(
             IsPlayerExist: result.IsPlayerExist,
             AuthToken: result.AuthToken);
     }

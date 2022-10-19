@@ -28,8 +28,8 @@ internal class GameHistorySettledQueryService : IQueryService<GameHistorySettled
                 .BettingHistoryPaginationAsync(
                     apiUrl: query.HistoryBetsPagingApiUrl,
                     token: token,
-                    startTime: query.StartTime.UtcDateTime,
-                    endTime: query.EndTime.UtcDateTime,
+                    startTime: query.StartTime,
+                    endTime: query.EndTime,
                     page: query.Page,
                     pageLimit: query.PageLimit,
                     cancellationToken: cancellationToken)

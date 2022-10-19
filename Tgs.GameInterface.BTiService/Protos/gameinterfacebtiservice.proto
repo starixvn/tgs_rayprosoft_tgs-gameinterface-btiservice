@@ -17,6 +17,7 @@ service  GameInterfaceBTiService{
   rpc FundStatus(FundStatusRequest) returns (FundStatusReply);
   rpc GameHistorySettled (GameHistorySettledRequest) returns (GameHistorySettledReply);
   rpc GameHistoryUnsettled (GameHistoryUnsettledRequest) returns (GameHistoryUnsettledReply);
+  rpc GameAuthToken (GameAuthTokenRequest) returns (GameAuthTokenReply);
 }
 
 // The request message containing the user's name.
@@ -24,7 +25,7 @@ message FundRequest {
 	string api_url = 1;
 	string agent_user_name = 2;
 	string agent_password = 3;
-	string player_code = 4;
+	string merchant_customer_code = 4;
 	string ref_transaction_code = 5;
 	phoenix.protobuf.DecimalValue amount = 6;
 }
@@ -40,14 +41,7 @@ message PlayerBalanceRequest {
 	string api_url = 1;
 	string agent_user_name = 2;
 	string agent_password = 3;
-	string player_code = 4;
-}
-
-message KickPlayerRequest {
-	string api_url = 1;
-	string agent_user_name = 2;
-	string agent_password = 3;
-	string player_code = 4;
+	string merchant_customer_code = 4;
 }
 
 message PlayerCreateRequest {
@@ -55,7 +49,7 @@ message PlayerCreateRequest {
 	string agent_user_name = 2;
 	string agent_password = 3;
 	string brand = 4;
-	string player_code = 5;
+	string merchant_customer_code = 5;
 	string currency = 6;
 }
 
@@ -77,6 +71,13 @@ message GameHistoryUnsettledRequest {
 	string agent_password = 4;
 	google.protobuf.Timestamp start_time = 5; 
 	google.protobuf.Timestamp end_time = 6;
+}
+
+message GameAuthTokenRequest {
+	string api_url = 1;
+	string agent_user_name = 2;
+	string agent_password = 3;
+	string merchant_customer_code = 4;
 }
 
 // The response message containing the greetings.
@@ -129,6 +130,11 @@ message GameHistoryUnsettled {
 	phoenix.protobuf.DecimalValue bet = 4;
 	phoenix.protobuf.DecimalValue valid_bet = 5;
     string additional_data = 6;
+}
+
+message GameAuthTokenReply {
+	bool is_player_exist = 1;
+	string auth_token = 2;
 }
 
 enum GameHistoryStatus{
