@@ -1,5 +1,5 @@
 ﻿namespace Tgs.GameInterface.BTiService.ViewModels;
 
-public record BalanceResultViewModel(
+public record PlayerBalanceResultViewModel(
     bool IsPlayerExist,
     decimal? Balance);

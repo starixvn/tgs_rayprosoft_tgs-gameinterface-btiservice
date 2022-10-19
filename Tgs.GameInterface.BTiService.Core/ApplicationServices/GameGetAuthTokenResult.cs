@@ -1,5 +1,5 @@
 ﻿namespace Tgs.GameInterface.BTiService.Core.ApplicationServices;
 
-public record BalanceResult(
+public record GameGetAuthTokenResult(
     bool IsPlayerExist,
-    decimal? Balance);
+    string AuthToken);

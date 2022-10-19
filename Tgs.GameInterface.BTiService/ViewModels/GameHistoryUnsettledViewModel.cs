@@ -1,10 +1,9 @@
 ﻿namespace Tgs.GameInterface.BTiService.ViewModels;
 
-public record GamePullRecordQueryViewModel(
-    Uri ApiUrl,
+public record GameHistoryUnsettledViewModel(
+    Uri TokenApiUrl,
+    Uri OpenBetsApiUrl,
     string AgentUserName,
     string AgentPassword,
     DateTimeOffset StartTime,
-    DateTimeOffset EndTime,
-    int Page = 0,
-    int PageLimit = 1000);
+    DateTimeOffset EndTime);

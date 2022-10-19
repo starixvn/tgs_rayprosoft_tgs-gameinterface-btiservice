@@ -1,7 +1,8 @@
 ﻿namespace Tgs.GameInterface.BTiService.Core.ApplicationServices;
 
-public record GameRecordQuery(
-    Uri ApiUrl,
+public record GameHistorySettledQuery(
+    Uri TokenApiUrl,
+    Uri HistoryBetsPagingApiUrl,
     string AgentUserName,
     string AgentPassword,
     DateTimeOffset StartTime,

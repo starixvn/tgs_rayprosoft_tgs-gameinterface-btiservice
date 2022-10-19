@@ -17,13 +17,14 @@ internal class FundInGetService : IGetService<FundInQuery, FundResult>
             apiUrl: query.ApiUrl,
             agentUserName: query.AgentUserName,
             agentPassword: query.AgentPassword,
-            merchantCustomerCode: query.PlayerCode,
-            refTransactionCode: query.TransactionId,
+            merchantCustomerCode: query.MerchantCustomerCode,
+            refTransactionCode: query.RefTransactionCode,
             amount: query.Amount,
             cancellationToken: cancellationToken).ConfigureAwait(false);
 
         return new FundResult(
-            TransactionId: result.TransactionId.ToString(),
+            RefTransactionCode: result.RefTransactionCode,
+            TransactionId: result.TransactionId,
             Balance: result.Balance);
     }
 }

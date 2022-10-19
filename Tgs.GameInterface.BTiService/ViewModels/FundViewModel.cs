@@ -1,7 +1,9 @@
 ﻿namespace Tgs.GameInterface.BTiService.ViewModels;
 
-public record FundOrderCheckingViewModel(
+public record FundViewModel(
     Uri ApiUrl,
     string AgentUserName,
     string AgentPassword,
-    string TransactionId);
+    string MerchantCustomerCode,
+    string RefTransactionCode,
+    decimal Amount);

@@ -1,9 +1,7 @@
 ﻿namespace Tgs.GameInterface.BTiService.Core.ApplicationServices;
 
-public record CreatePlayerCommand(
+public record PlayerBalanceQuery(
     Uri ApiUrl,
     string AgentUserName,
     string AgentPassword,
-    string Brand,
-    string PlayerCode,
-    string Currency);
+    string MerchantCustomerCode);

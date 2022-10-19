@@ -1,7 +1,7 @@
 ﻿namespace Tgs.GameInterface.BTiService.Core.ApplicationServices;
 
-public record FundOrderCheckingQuery(
+public record GameGetAuthTokenQuery(
     Uri ApiUrl,
     string AgentUserName,
     string AgentPassword,
-    string TransactionId);
+    string MerchantCustomerCode);

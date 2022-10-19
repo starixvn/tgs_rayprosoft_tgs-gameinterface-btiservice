@@ -3,12 +3,12 @@ using Tgs.ServiceUtility;
 
 namespace Tgs.GameInterface.BTiService.Core.ApplicationServices;
 
-internal class CreatePlayerCommandService : ICommandService<CreatePlayerCommand>
+internal class PlayerCreateCommandService : ICommandService<PlayerCreateCommand>
 {
     private readonly IGameApiClient _client;
     private readonly GameInterfaceSettingOptions _gameInterfaceSetting;
 
-    public CreatePlayerCommandService(
+    public PlayerCreateCommandService(
         IOptions<GameInterfaceSettingOptions> options,
         IGameApiClient client)
     {
@@ -16,7 +16,7 @@ internal class CreatePlayerCommandService : ICommandService<CreatePlayerCommand>
         _client = client ?? throw new ArgumentNullException(nameof(client));
     }
 
-    public ValueTask ExecuteAsync(CreatePlayerCommand command, CancellationToken cancellationToken = default)
+    public ValueTask ExecuteAsync(PlayerCreateCommand command, CancellationToken cancellationToken = default)
     {
         var mapping = _gameInterfaceSetting
             .CurrencyMappings
@@ -35,10 +35,10 @@ internal class CreatePlayerCommandService : ICommandService<CreatePlayerCommand>
             apiUrl: command.ApiUrl,
             agentUserName: command.AgentUserName,
             agentPassword: command.AgentPassword,
-            merchantCustomerCode: command.PlayerCode,
+            merchantCustomerCode: command.MerchantCustomerCode,
             currencyCode: command.Currency,
             firstName: command.Brand,
-            lastName: command.PlayerCode,
+            lastName: command.MerchantCustomerCode,
             countryCode: mapping.CountryCode,
             city: mapping.City,
             customerDefaultLanguage: mapping.LanguageCode,

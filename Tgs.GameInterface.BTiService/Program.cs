@@ -62,7 +62,10 @@ builder.Services.AddSwaggerGen(c =>
     }
 });
 
-builder.Services.AddBTiServiceCore();
+builder.Services.AddBTiServiceCore((options, sp) =>
+{
+    sp.GetRequiredService<IConfiguration>().GetSection("GameInterfaceSetting").Bind(options);
+});
 
 builder.Services
      .AddSingleton<IConfigureOptions<OtlpExporterOptions>>(

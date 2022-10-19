@@ -10,12 +10,13 @@ package GameInterfaceBTiService;
 // The greeting service definition.
 service  GameInterfaceBTiService{
   // Sends a greeting
-  rpc CreatePlayer (CreatePlayerRequest) returns (Reply);
+  rpc PlayerCreate (PlayerCreateRequest) returns (BaseReply);
+  rpc PlayerBalance (PlayerBalanceRequest) returns (PlayerBalanceReply);  
   rpc FundIn (FundRequest) returns (FundReply);
-  rpc FundOrderChecking(FundOrderCheckingRequest) returns (FundOrderCheckingReply);
   rpc FundOut (FundRequest) returns (FundReply);
-  rpc GetBalance (BalanceRequest) returns (BalanceReply);  
-  rpc GetGamePullRecord (GamePullRecordRequest) returns (GamePullRecordReply);
+  rpc FundStatus(FundStatusRequest) returns (FundStatusReply);
+  rpc GameHistorySettled (GameHistorySettledRequest) returns (GameHistorySettledReply);
+  rpc GameHistoryUnsettled (GameHistoryUnsettledRequest) returns (GameHistoryUnsettledReply);
 }
 
 // The request message containing the user's name.
@@ -24,18 +25,18 @@ message FundRequest {
 	string agent_user_name = 2;
 	string agent_password = 3;
 	string player_code = 4;
-	string transaction_id = 5;
+	string ref_transaction_code = 5;
 	phoenix.protobuf.DecimalValue amount = 6;
 }
 
-message FundOrderCheckingRequest {
+message FundStatusRequest {
 	string api_url = 1;
 	string agent_user_name = 2;
 	string agent_password = 3;
-	string transaction_id = 4;
+	string ref_transaction_code = 4;
 }
 
-message BalanceRequest {
+message PlayerBalanceRequest {
 	string api_url = 1;
 	string agent_user_name = 2;
 	string agent_password = 3;
@@ -49,7 +50,7 @@ message KickPlayerRequest {
 	string player_code = 4;
 }
 
-message CreatePlayerRequest {
+message PlayerCreateRequest {
 	string api_url = 1;
 	string agent_user_name = 2;
 	string agent_password = 3;
@@ -58,41 +59,87 @@ message CreatePlayerRequest {
 	string currency = 6;
 }
 
-message GamePullRecordRequest {
-	string api_url = 1;
-	string agent_user_name = 2;
-	string agent_password = 3;
-	google.protobuf.Timestamp start_time = 4; 
-	google.protobuf.Timestamp end_time = 5;
-	int32 page = 6;
-	int32 page_limit = 7;
+message GameHistorySettledRequest {
+	string token_api_url = 1;
+	string history_bets_paging_api_url = 2;
+	string agent_user_name = 3;
+	string agent_password = 4;
+	google.protobuf.Timestamp start_time = 5; 
+	google.protobuf.Timestamp end_time = 6;
+	int32 page = 7;
+	int32 page_limit = 8;
+}
+
+message GameHistoryUnsettledRequest {
+	string token_api_url = 1;
+	string open_bets_api_url = 2;
+	string agent_user_name = 3;
+	string agent_password = 4;
+	google.protobuf.Timestamp start_time = 5; 
+	google.protobuf.Timestamp end_time = 6;
 }
 
 // The response message containing the greetings.
-message Reply {
-	bool success = 1;
+message BaseReply{
+	bool status = 1;
 }
 
-message FundReply {
-	string transaction_id = 1;	
+message PlayerBalanceReply {
+	bool is_player_exist = 1;
 	phoenix.protobuf.DecimalValue balance = 2;
 }
 
-message FundOrderCheckingReply {
-	bool exist = 1;
+message FundReply {
+	string ref_transaction_code = 1;
+    string transaction_id = 2;
+    phoenix.protobuf.DecimalValue balance = 3; 
 }
 
-message BalanceReply {
-	bool success = 1;
-	string message = 2;
-	bool is_player_exist = 3;
-	phoenix.protobuf.DecimalValue balance = 4;
+message FundStatusReply {
+	bool is_order_exist = 1;
 }
 
-message GamePullRecordReply {
-	repeated GamePullRecord items = 1;
+message GameHistorySettledReply {
+	repeated GameHistorySettled items = 1;
 }
 
-message GamePullRecord {
-	
+message GameHistorySettled {
+    string player_code = 1;
+    string external_round_id = 2;
+    bool is_closed = 3;
+    GameHistoryStatus status = 4;
+	google.protobuf.Timestamp external_created_on = 5;
+	google.protobuf.Timestamp external_closed_on = 6;
+	phoenix.protobuf.DecimalValue bet = 7;
+	phoenix.protobuf.DecimalValue valid_bet = 8;
+	phoenix.protobuf.DecimalValue player_win_loss = 9;
+	phoenix.protobuf.DecimalValue turnover = 10;
+	phoenix.protobuf.DecimalValue settle = 11;
+    string additional_data = 12;
+}
+
+message GameHistoryUnsettledReply {
+	repeated GameHistoryUnsettled items = 1;
+}
+
+message GameHistoryUnsettled {
+    string player_code = 1;
+    string external_round_id = 2;
+	google.protobuf.Timestamp external_created_on = 3;
+	phoenix.protobuf.DecimalValue bet = 4;
+	phoenix.protobuf.DecimalValue valid_bet = 5;
+    string additional_data = 6;
+}
+
+enum GameHistoryStatus{
+	GAME_HISTORY_STATUS_UNKNOWN = 0;
+	GAME_HISTORY_STATUS_OPENED = 1;
+	GAME_HISTORY_STATUS_WON = 2;
+	GAME_HISTORY_STATUS_LOST = 3;
+	GAME_HISTORY_STATUS_HALF_WON = 4;
+	GAME_HISTORY_STATUS_HALF_LOST = 5;
+	GAME_HISTORY_STATUS_CANCELED = 6;
+	GAME_HISTORY_STATUS_CASHOUT = 7;
+	GAME_HISTORY_STATUS_DRAW = 8;
+	GAME_HISTORY_STATUS_DECLINED = 9;
 }
