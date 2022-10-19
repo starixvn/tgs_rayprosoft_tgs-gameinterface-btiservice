@@ -58,7 +58,8 @@ push-nuget:
 push-docker-image:
   stage: publish
   needs:
-    - build-code
+    - job: build-code
+      artifacts: true
     - unit-test
   only:
     - main
