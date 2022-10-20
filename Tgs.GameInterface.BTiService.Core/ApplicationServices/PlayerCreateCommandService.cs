@@ -37,7 +37,7 @@ internal class PlayerCreateCommandService : ICommandService<PlayerCreateCommand>
             agentPassword: command.AgentPassword,
             merchantCustomerCode: command.MerchantCustomerCode,
             currencyCode: command.Currency,
-            firstName: command.Brand,
+            firstName: command.BrandCode,
             lastName: command.MerchantCustomerCode,
             countryCode: mapping.CountryCode,
             city: mapping.City,

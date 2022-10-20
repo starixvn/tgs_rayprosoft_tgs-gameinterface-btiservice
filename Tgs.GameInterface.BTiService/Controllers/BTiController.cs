@@ -160,7 +160,7 @@ public class BTiController : ControllerBase
             ApiUrl: source.ApiUrl,
             AgentUserName: source.AgentUserName,
             AgentPassword: source.AgentPassword,
-            Brand: source.Brand,
+            BrandCode: source.Brand,
             MerchantCustomerCode: source.MerchantCustomerCode,
             Currency: source.Currency);
         return service.ExecuteAsync(

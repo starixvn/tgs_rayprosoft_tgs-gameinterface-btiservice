@@ -8,14 +8,14 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddGameInterfaceBTiServiceClient(
         this IServiceCollection services,
-        Action<GameInterfaceBTiServiceClientOptions, IServiceProvider> configure)
+        Action<GameInterfaceBTiClientOptions, IServiceProvider> configure)
         => services
-            .AddOptions<GameInterfaceBTiServiceClientOptions>()
+            .AddOptions<GameInterfaceBTiClientOptions>()
             .Configure(configure)
             .Services
             .AddGrpcClient<GameInterfaceBTiService.GameInterfaceBTiServiceClient>((sp, configureClient) =>
             {
-                var options = sp.GetRequiredService<IOptions<GameInterfaceBTiServiceClientOptions>>().Value;
+                var options = sp.GetRequiredService<IOptions<GameInterfaceBTiClientOptions>>().Value;
                 configureClient.Address = options.BaseUrl;
             })
             .ConfigureChannel((sp, configureChannel) =>
@@ -33,5 +33,5 @@ public static class ServiceCollectionExtensions
             .Services
             .AddSingleton<DiagnosticsInterceptorOptions>()
             .AddSingleton<LoggingInterceptor>()
-            .AddTransient<IGameInterfaceBTiServiceClient, GameInterfaceBTiServiceClient>();
+            .AddTransient<IGameInterfaceBTiClient, GameInterfaceBTiClient>();
 }

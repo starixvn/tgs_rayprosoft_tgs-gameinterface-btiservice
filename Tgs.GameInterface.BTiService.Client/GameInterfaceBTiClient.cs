@@ -4,11 +4,11 @@ using Tgs.GameInterface.BTiService.Protos;
 
 namespace Tgs.GameInterface.BTiService.Client;
 
-internal class GameInterfaceBTiServiceClient : IGameInterfaceBTiServiceClient
+internal class GameInterfaceBTiClient : IGameInterfaceBTiClient
 {
     private readonly GameInterfaceBTiService.GameInterfaceBTiServiceClient _client;
 
-    public GameInterfaceBTiServiceClient(GameInterfaceBTiService.GameInterfaceBTiServiceClient client)
+    public GameInterfaceBTiClient(GameInterfaceBTiService.GameInterfaceBTiServiceClient client)
     {
         _client = client ?? throw new ArgumentNullException(nameof(client));
     }
@@ -213,7 +213,7 @@ internal class GameInterfaceBTiServiceClient : IGameInterfaceBTiServiceClient
         Uri apiUrl,
         string agentUserName,
         string agentPassword,
-        string brand,
+        string brandCode,
         string merchantCustomerCode,
         string currency,
         CancellationToken cancellationToken)
@@ -223,7 +223,7 @@ internal class GameInterfaceBTiServiceClient : IGameInterfaceBTiServiceClient
             ApiUrl = apiUrl.ToString(),
             AgentUserName = agentUserName,
             AgentPassword = agentPassword,
-            Brand = brand,
+            BrandCode = brandCode,
             MerchantCustomerCode = merchantCustomerCode,
             Currency = currency
         };

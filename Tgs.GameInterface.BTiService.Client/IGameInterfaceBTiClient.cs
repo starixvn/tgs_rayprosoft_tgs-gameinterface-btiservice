@@ -2,7 +2,7 @@
 
 namespace Tgs.GameInterface.BTiService.Client;
 
-public interface IGameInterfaceBTiServiceClient
+public interface IGameInterfaceBTiClient
 {
     ValueTask<FundReply> FundInAsync(
         Uri apiUrl,
@@ -61,14 +61,14 @@ public interface IGameInterfaceBTiServiceClient
         string agentUserName,
         string agentPassword,
         string merchantCustomerCode,
-        CancellationToken cancellationToken);
+        CancellationToken cancellationToken = default);
 
     ValueTask PlayerCreateAsync(
         Uri apiUrl,
         string agentUserName,
         string agentPassword,
-        string brand,
+        string brandCode,
         string merchantCustomerCode,
         string currency,
-        CancellationToken cancellationToken);
+        CancellationToken cancellationToken = default);
 }

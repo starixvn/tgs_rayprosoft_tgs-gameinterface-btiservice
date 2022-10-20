@@ -48,7 +48,7 @@ message PlayerCreateRequest {
 	string api_url = 1;
 	string agent_user_name = 2;
 	string agent_password = 3;
-	string brand = 4;
+	string brand_code = 4;
 	string merchant_customer_code = 5;
 	string currency = 6;
 }

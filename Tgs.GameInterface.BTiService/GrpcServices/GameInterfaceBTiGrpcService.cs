@@ -237,7 +237,7 @@ internal class GameInterfaceBTiGrpcService : GameInterfaceBTiService.GameInterfa
             ApiUrl: new(request.ApiUrl),
             AgentUserName: request.AgentUserName,
             AgentPassword: request.AgentPassword,
-            Brand: request.Brand,
+            BrandCode: request.BrandCode,
             MerchantCustomerCode: request.MerchantCustomerCode,
             Currency: request.Currency);
 
