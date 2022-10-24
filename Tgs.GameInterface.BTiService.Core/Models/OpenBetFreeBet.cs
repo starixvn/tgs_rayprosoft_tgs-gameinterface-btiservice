@@ -2,6 +2,8 @@
 
 public record OpenBetFreeBet
 {
-    public float Amount { get; set; }
+    public decimal Amount { get; set; }
     public int IsRiskFreeBet { get; set; }
 }
+
+
