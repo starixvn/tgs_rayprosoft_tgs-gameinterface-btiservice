@@ -4,7 +4,7 @@ public record OpenBet
 {
     public decimal Gain { get; set; }
     public string PurchaseID { get; set; } = default!;
-    public DateTime UpdateDate { get; set; }
+    public DateTime? UpdateDate { get; set; }
     public int Odds { get; set; }
     public string OddsInUserStyle { get; set; } = default!;
     public string OddsStyleOfUser { get; set; } = default!;
