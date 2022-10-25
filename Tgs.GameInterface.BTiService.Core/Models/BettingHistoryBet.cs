@@ -35,8 +35,3 @@ public record BettingHistoryBet
     public string UserName { get; set; } = default!;
     public decimal ValidStake { get; set; }
 }
-
-
-
-
-

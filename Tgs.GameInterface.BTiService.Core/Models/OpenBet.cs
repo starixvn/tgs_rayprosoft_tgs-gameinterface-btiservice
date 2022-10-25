@@ -35,9 +35,3 @@ public record OpenBet
     public string UserName { get; set; } = default!;
     public decimal ValidStake { get; set; }
 }
-
-
-
-
-
-

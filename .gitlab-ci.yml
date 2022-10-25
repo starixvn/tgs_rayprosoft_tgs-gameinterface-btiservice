@@ -4,6 +4,10 @@ variables:
   HelmTemplateFolderName: game-gameinterface-bti-service
   BuildCacheKey: Tgs.GameInterface.BTiService.$CI_PIPELINE_ID
 
+default:
+  before_script:
+    - export Tag="$(date -d $CI_PIPELINE_CREATED_AT +%Y%m%d%H%M).$CI_PIPELINE_IID"
+
 stages:
   - build
   - test
