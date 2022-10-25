@@ -91,12 +91,12 @@ push-k8s-template:
     - main
   script:
     - mkdir -p artifacts/k8s
-    - cp -R deployment/k8s/game-gameinterface-bti-service artifacts/k8s/
+    - cp -R deployment/k8s/$HelmTemplateFolderName artifacts/k8s/
     - |
       yq -i e '
         .image.repository = strenv(ImageName) |
         .image.tag = strenv(Tag)
-      ' artifacts/k8s/game-gameinterface-bti-service/values.yaml
+      ' artifacts/k8s/$HelmTemplateFolderName/values.yaml
   artifacts:
     name: HelmTemplate
     untracked: false
