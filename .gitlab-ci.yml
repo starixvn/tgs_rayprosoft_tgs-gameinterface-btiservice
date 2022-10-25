@@ -64,7 +64,7 @@ push-docker-image:
   only:
     - main
   cache:
-    key: Tgs.OpApi.$CI_PIPELINE_ID
+    key: Tgs.GameInterface.BTiService.$CI_PIPELINE_ID
     untracked: true
     policy: pull
   script:
