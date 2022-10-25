@@ -79,20 +79,20 @@ push-docker-image:
     - dotnet build "Tgs.GameInterface.BTiService/Tgs.GameInterface.BTiService.csproj" -c $BuildConfiguration -t:ContainerBuild -p:DockerfileTag="$ImageName:$Tag" --no-restore
     - docker push $ImageName:$Tag
 
-push-bankinfo-rebuild-hash-k8s-template:
+push-k8s-template:
   stage: publish
   needs:
-    - push-bankinfo-rebuild-hash-job-image
+    - unit-test
   only:
     - main
   script:
     - mkdir -p artifacts/k8s
-    - cp -R deployment/k8s/bankinfo-rebuild-hash artifacts/k8s/
+    - cp -R deployment/k8s/game-gameinterface-bti-service artifacts/k8s/
     - |
       yq -i e '
-        .image.repository = strenv(RebuildHashImageName) |
+        .image.repository = strenv(ImageName) |
         .image.tag = strenv(Tag)
-      ' artifacts/k8s/bankinfo-rebuild-hash/values.yaml
+      ' artifacts/k8s/game-gameinterface-bti-service/values.yaml
   artifacts:
     name: HelmTemplate
     untracked: false
