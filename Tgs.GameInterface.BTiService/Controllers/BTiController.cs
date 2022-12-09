@@ -304,7 +304,7 @@ public class BTiController : ControllerBase
                 PlayerCode: gameRecord.PlayerCode,
                 ExternalRoundId: gameRecord.ExternalRoundId,
                 IsClosed: gameRecord.IsClosed,
-                Status: (GameHistoryStatus)Enum.Parse(typeof(GameHistoryStatus), gameRecord.Status, true),
+                Status: (GameHistoryStatus)Enum.Parse(typeof(GameHistoryStatus), gameRecord.Status.Replace(" ", string.Empty), true),
                 ExternalCreatedOn: gameRecord.ExternalCreatedOn,
                 ExternalClosedOn: gameRecord.ExternalClosedOn,
                 Bet: gameRecord.Bet,

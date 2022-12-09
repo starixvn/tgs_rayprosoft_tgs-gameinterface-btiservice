@@ -157,7 +157,7 @@ internal class GameInterfaceBTiGrpcService : GameInterfaceBTiService.GameInterfa
                     PlayerCode = gameHistorySettled.PlayerCode,
                     ExternalRoundId = gameHistorySettled.ExternalRoundId,
                     IsClosed = gameHistorySettled.IsClosed,
-                    Status = (GameHistoryStatus)Enum.Parse(typeof(GameHistoryStatus), gameHistorySettled.Status, true),
+                    Status = (GameHistoryStatus)Enum.Parse(typeof(GameHistoryStatus), gameHistorySettled.Status.Replace(" ", string.Empty), true),
                     ExternalCreatedOn = gameHistorySettled.ExternalCreatedOn.ToTimestamp(),
                     ExternalClosedOn = gameHistorySettled.ExternalClosedOn.ToTimestamp(),
                     Bet = gameHistorySettled.Bet,
