@@ -9,6 +9,7 @@ namespace Tgs.GameInterface.BTiService.GrpcServices;
 
 internal class GameInterfaceBTiGrpcService : GameInterfaceBTiService.GameInterfaceBTiServiceBase
 {
+    private readonly ILogger<GameInterfaceBTiGrpcService> _logger;
     private readonly IGetService<FundInQuery, FundResult> _fundInService;
     private readonly IGetService<FundOutQuery, FundResult> _fundOutService;
     private readonly IGetService<FundStatusQuery, bool> _fundStatusService;
@@ -19,6 +20,7 @@ internal class GameInterfaceBTiGrpcService : GameInterfaceBTiService.GameInterfa
     private readonly IQueryService<GameHistoryUnsettledQuery, GameHistoryUnsettledResult> _gameHistoryUnsettledService;
 
     public GameInterfaceBTiGrpcService(
+        ILogger<GameInterfaceBTiGrpcService> logger,
         IGetService<FundInQuery, FundResult> fundInService,
         IGetService<FundOutQuery, FundResult> fundOutService,
         IGetService<FundStatusQuery, bool> fundStatusService,
@@ -29,6 +31,7 @@ internal class GameInterfaceBTiGrpcService : GameInterfaceBTiService.GameInterfa
         IQueryService<GameHistoryUnsettledQuery, GameHistoryUnsettledResult> gameHistoryUnsettledService
         )
     {
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _fundInService = fundInService ?? throw new ArgumentNullException(nameof(fundInService));
         _fundOutService = fundOutService ?? throw new ArgumentNullException(nameof(fundOutService));
         _fundStatusService = fundStatusService ?? throw new ArgumentNullException(nameof(fundStatusService));
@@ -37,6 +40,16 @@ internal class GameInterfaceBTiGrpcService : GameInterfaceBTiService.GameInterfa
         _gameGetAuthTokenService = gameGetAuthTokenService ?? throw new ArgumentNullException(nameof(gameGetAuthTokenService));
         _gameHistorySettledService = gameHistorySettledService ?? throw new ArgumentNullException(nameof(gameHistorySettledService));
         _gameHistoryUnsettledService = gameHistoryUnsettledService ?? throw new ArgumentNullException(nameof(gameHistoryUnsettledService));
+    }
+
+    public override Task<CheckingServiceReply> CheckingService(CheckingServiceRequest request, ServerCallContext context)
+    {
+        _logger.LogWarning("LogOn:{logOn} Message: Create a check connection.({machineName})", DateTime.Now.ToString("o"), request.MachineName);
+
+        return Task.FromResult(new CheckingServiceReply
+        {
+            MachineName = Environment.MachineName
+        });
     }
 
     public override async Task<FundReply> FundIn(FundRequest request, ServerCallContext context)

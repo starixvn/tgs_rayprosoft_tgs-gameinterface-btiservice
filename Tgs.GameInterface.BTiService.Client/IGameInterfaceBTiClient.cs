@@ -4,6 +4,10 @@ namespace Tgs.GameInterface.BTiService.Client;
 
 public interface IGameInterfaceBTiClient
 {
+    ValueTask<string> CheckingServiceAsync(
+        string machineName,
+        CancellationToken cancellationToken = default);
+
     ValueTask<FundReply> FundInAsync(
         Uri apiUrl,
         string agentUserName,
