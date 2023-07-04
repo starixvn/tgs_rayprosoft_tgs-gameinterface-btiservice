@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using Microsoft.AspNetCore.WebUtilities;
+using System.Web;
 using Microsoft.Extensions.Logging;
 using Tgs.GameInterface.BTiService.Core.Exceptions;
 using Tgs.GameInterface.BTiService.Core.Models;
@@ -43,15 +43,13 @@ internal class GameDataApiClient : IGameDataApiClient
             { "To", endTime.ToUniversalTime().ToString("s") }
         };
 
-        var query = new Dictionary<string, string>
-        {
-            {"token", token}
-        };
-
-        var url = new Uri(QueryHelpers.AddQueryString(apiUrl.ToString(), query));
+        var uriBuilder = new UriBuilder(apiUrl);
+        var query = HttpUtility.ParseQueryString(uriBuilder.Query);
+        query["token"] = token;
+        uriBuilder.Query = query.ToString();
 
         var jsonNode = await PostAsync(
-            url,
+             uriBuilder.Uri,
             request,
             "Bettinghistory",
             cancellationToken).ConfigureAwait(false);
@@ -94,15 +92,13 @@ internal class GameDataApiClient : IGameDataApiClient
             }
         };
 
-        var query = new Dictionary<string, string>
-        {
-            {"token", token}
-        };
-
-        var url = new Uri(QueryHelpers.AddQueryString(apiUrl.ToString(), query));
+        var uriBuilder = new UriBuilder(apiUrl);
+        var query = HttpUtility.ParseQueryString(uriBuilder.Query);
+        query["token"] = token;
+        uriBuilder.Query = query.ToString();
 
         var jsonNode = await PostAsync(
-            url,
+            uriBuilder.Uri,
             request,
             "BettinghistoryPagination",
             cancellationToken).ConfigureAwait(false);
@@ -170,15 +166,13 @@ internal class GameDataApiClient : IGameDataApiClient
             { "To", endTime.ToUniversalTime().ToString("s") }
         };
 
-        var query = new Dictionary<string, string>
-        {
-            {"token", token}
-        };
-
-        var url = new Uri(QueryHelpers.AddQueryString(apiUrl.ToString(), query));
+        var uriBuilder = new UriBuilder(apiUrl);
+        var query = HttpUtility.ParseQueryString(uriBuilder.Query);
+        query["token"] = token;
+        uriBuilder.Query = query.ToString();
 
         var jsonNode = await PostAsync(
-            url,
+            uriBuilder.Uri,
             request,
             "OpenBets",
             cancellationToken).ConfigureAwait(false);
@@ -219,9 +213,12 @@ internal class GameDataApiClient : IGameDataApiClient
 
         var responseMessage = default(string);
 
-        using (var sr = new StreamReader(httpResponseMessage.Content.ReadAsStreamAsync(cancellationToken).Result))
+        using (var streamReader = new StreamReader(httpResponseMessage.Content.ReadAsStreamAsync(cancellationToken).Result))
         {
-            responseMessage = await sr.ReadToEndAsync().ConfigureAwait(false) ?? string.Empty;
+            responseMessage = await streamReader
+                .ReadToEndAsync(
+                    cancellationToken: cancellationToken)
+                .ConfigureAwait(false) ?? string.Empty;
         }
 
         var apiLogEvent = new GameApiLogEvent

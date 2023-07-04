@@ -286,9 +286,12 @@ internal class GameApiClient : IGameApiClient
 
         var responseMessage = default(string);
 
-        using (var sr = new StreamReader(httpResponseMessage.Content.ReadAsStreamAsync(cancellationToken).Result))
+        using (var stream = new StreamReader(httpResponseMessage.Content.ReadAsStreamAsync(cancellationToken).Result))
         {
-            responseMessage = await sr.ReadToEndAsync().ConfigureAwait(false) ?? string.Empty;
+            responseMessage = await stream
+                .ReadToEndAsync(
+                    cancellationToken: cancellationToken)
+                .ConfigureAwait(false) ?? string.Empty;
         }
 
         var apiLogEvent = new GameApiLogEvent
