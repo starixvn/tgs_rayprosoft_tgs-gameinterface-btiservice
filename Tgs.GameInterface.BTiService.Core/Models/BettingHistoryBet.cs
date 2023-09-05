@@ -14,7 +14,7 @@ public record BettingHistoryBet
     public int DomainID { get; set; }
     public BettingHistoryBetFreeBet FreeBet { get; set; } = default!;
     public string MerchantCustomerID { get; set; } = default!;
-    public int NonCashOutAmount { get; set; }
+    public decimal NonCashOutAmount { get; set; }
     public int Odds { get; set; }
     public decimal OddsDec { get; set; }
     public string OddsInUserStyle { get; set; } = default!;
