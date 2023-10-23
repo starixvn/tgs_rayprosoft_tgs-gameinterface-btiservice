@@ -1,15 +1,13 @@
 ﻿using System.Net;
 using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RichardSzalay.MockHttp;
 using Tgs.GameInterface.BTiService.Core.Exceptions;
 
 namespace Tgs.GameInterface.BTiService.Core.UnitTest;
 
-[TestClass]
 public class GetBalanceUnitTest
 {
-    [TestMethod]
+    [Fact]
     public async Task 玩家不存在()
     {
         var apiUrl = new Uri("https://wallet.bti.bet/");
@@ -28,19 +26,17 @@ public class GetBalanceUnitTest
 
         var sut = new GameApiClient(fakeHttpClient, fakeLog);
 
-        var actual = await sut
-            .GetBalanceAsync(
-                apiUrl: apiUrl,
-                agentUserName: agentUserName,
-                agentPassword: agentPassword,
-                merchantCustomerCode: merchantCustomerCode)
-            .ConfigureAwait(false);
+        var actual = await sut.GetBalanceAsync(
+            apiUrl: apiUrl,
+            agentUserName: agentUserName,
+            agentPassword: agentPassword,
+            merchantCustomerCode: merchantCustomerCode);
 
-        Assert.IsNotNull(actual);
-        Assert.IsFalse(actual.IsPlayerExist);
+        Assert.NotNull(actual);
+        Assert.False(actual.IsPlayerExist);
     }
 
-    [TestMethod]
+    [Fact]
     public async Task 取得餘額()
     {
         var apiUrl = new Uri("https://wallet.bti.bet/");
@@ -59,20 +55,18 @@ public class GetBalanceUnitTest
 
         var sut = new GameApiClient(fakeHttpClient, fakeLog);
 
-        var actual = await sut
-            .GetBalanceAsync(
-                apiUrl: apiUrl,
-                agentUserName: agentUserName,
-                agentPassword: agentPassword,
-                merchantCustomerCode: merchantCustomerCode)
-            .ConfigureAwait(false);
+        var actual = await sut.GetBalanceAsync(
+            apiUrl: apiUrl,
+            agentUserName: agentUserName,
+            agentPassword: agentPassword,
+            merchantCustomerCode: merchantCustomerCode);
 
-        Assert.IsNotNull(actual);
-        Assert.IsTrue(actual.IsPlayerExist);
-        Assert.AreEqual(100m, actual.Balance);
+        Assert.NotNull(actual);
+        Assert.True(actual.IsPlayerExist);
+        Assert.Equal(100m, actual.Balance);
     }
 
-    [TestMethod]
+    [Fact]
     public async Task 其他錯誤()
     {
         var apiUrl = new Uri("https://wallet.bti.bet/");
@@ -91,14 +85,12 @@ public class GetBalanceUnitTest
 
         var sut = new GameApiClient(fakeHttpClient, fakeLog);
 
-        _ = await Assert
-            .ThrowsExceptionAsync<GameProviderResponseErrorException>(() =>
-                sut.GetBalanceAsync(
-                    apiUrl: apiUrl,
-                    agentUserName: agentUserName,
-                    agentPassword: agentPassword,
-                    merchantCustomerCode: merchantCustomerCode)
-                .AsTask())
-            .ConfigureAwait(false);
+        _ = await Assert.ThrowsAsync<GameProviderResponseErrorException>(
+            () => sut.GetBalanceAsync(
+                apiUrl: apiUrl,
+                agentUserName: agentUserName,
+                agentPassword: agentPassword,
+                merchantCustomerCode: merchantCustomerCode)
+            .AsTask());
     }
 }

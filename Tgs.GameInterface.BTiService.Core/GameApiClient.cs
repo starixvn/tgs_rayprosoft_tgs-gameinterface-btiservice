@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
-using System.Text.Json;
 using System.Xml;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Tgs.GameInterface.BTiService.Core.Exceptions;
 using Tgs.GameInterface.BTiService.Core.Models;
 
@@ -229,7 +229,7 @@ internal class GameApiClient : IGameApiClient
         var balance = decimal.Parse(xmlDocument.GetElementsByTagName("Balance")[0]?.InnerText ?? throw new Exception());
         var transactionID = xmlDocument.GetElementsByTagName("TransactionID")[0]?.InnerText ?? throw new Exception("取得交易單號是空的");
 
-        return new TransferWHLResult(refTransactionCode, transactionID, balance);
+        return new TransferWHLResult(refTransactionCode, transactionID, balance, JsonConvert.SerializeXmlNode(xmlDocument));
     }
 
     public async ValueTask<TransferWHLResult> TransferToWHLAsync(
@@ -269,7 +269,7 @@ internal class GameApiClient : IGameApiClient
         var balance = decimal.Parse(xmlDocument.GetElementsByTagName("Balance")[0]?.InnerText ?? throw new Exception());
         var transactionID = xmlDocument.GetElementsByTagName("TransactionID")[0]?.InnerText ?? throw new Exception("取得交易單號是空的");
 
-        return new TransferWHLResult(refTransactionCode, transactionID, balance);
+        return new TransferWHLResult(refTransactionCode, transactionID, balance, JsonConvert.SerializeXmlNode(xmlDocument));
     }
 
     private async ValueTask<XmlDocument> PostAsync(Uri apiUrl, IEnumerable<KeyValuePair<string, string>> parameters, string logPrefix, CancellationToken cancellationToken = default)
@@ -309,7 +309,7 @@ internal class GameApiClient : IGameApiClient
             RecordedOn = DateTimeOffset.UtcNow
         };
 
-        _logger.LogInformation("{apiLogEvent}", JsonSerializer.Serialize(apiLogEvent));
+        _logger.LogInformation("{apiLogEvent}", System.Text.Json.JsonSerializer.Serialize(apiLogEvent));
 
         _ = httpResponseMessage.EnsureSuccessStatusCode();
 

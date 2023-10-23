@@ -1,15 +1,13 @@
 ﻿using System.Net;
 using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RichardSzalay.MockHttp;
 using Tgs.GameInterface.BTiService.Core.Exceptions;
 
 namespace Tgs.GameInterface.BTiService.Core.UnitTest;
 
-[TestClass]
 public class CheckTransactionUnitTest
 {
-    [TestMethod]
+    [Fact]
     public async Task 訂單不存在()
     {
         var apiUrl = new Uri("https://wallet.bti.bet/");
@@ -28,19 +26,16 @@ public class CheckTransactionUnitTest
 
         var sut = new GameApiClient(fakeHttpClient, fakeLog);
 
-        var actual = await sut
-            .CheckTransactionAsync(
-                apiUrl: apiUrl,
-                agentUserName: agentUserName,
-                agentPassword: agentPassword,
-                refTransactionCode: transactionId)
-            .ConfigureAwait(false);
+        var actual = await sut.CheckTransactionAsync(
+            apiUrl: apiUrl,
+            agentUserName: agentUserName,
+            agentPassword: agentPassword,
+            refTransactionCode: transactionId);
 
-        Assert.IsNotNull(actual);
-        Assert.IsFalse(actual);
+        Assert.False(actual);
     }
 
-    [TestMethod]
+    [Fact]
     public async Task 訂單存在()
     {
         var apiUrl = new Uri("https://wallet.bti.bet/");
@@ -59,19 +54,16 @@ public class CheckTransactionUnitTest
 
         var sut = new GameApiClient(fakeHttpClient, fakeLog);
 
-        var actual = await sut
-            .CheckTransactionAsync(
-                apiUrl: apiUrl,
-                agentUserName: agentUserName,
-                agentPassword: agentPassword,
-                refTransactionCode: transactionId)
-            .ConfigureAwait(false);
+        var actual = await sut.CheckTransactionAsync(
+            apiUrl: apiUrl,
+            agentUserName: agentUserName,
+            agentPassword: agentPassword,
+            refTransactionCode: transactionId);
 
-        Assert.IsNotNull(actual);
-        Assert.IsTrue(actual);
+        Assert.True(actual);
     }
 
-    [TestMethod]
+    [Fact]
     public async Task 其他錯誤()
     {
         var apiUrl = new Uri("https://wallet.bti.bet/");
@@ -90,14 +82,12 @@ public class CheckTransactionUnitTest
 
         var sut = new GameApiClient(fakeHttpClient, fakeLog);
 
-        _ = await Assert
-            .ThrowsExceptionAsync<GameProviderResponseErrorException>(() =>
-                sut.CheckTransactionAsync(
-                    apiUrl: apiUrl,
-                    agentUserName: agentUserName,
-                    agentPassword: agentPassword,
-                    refTransactionCode: transactionId)
-                .AsTask())
-            .ConfigureAwait(false);
+        _ = await Assert.ThrowsAsync<GameProviderResponseErrorException>(
+            () => sut.CheckTransactionAsync(
+                apiUrl: apiUrl,
+                agentUserName: agentUserName,
+                agentPassword: agentPassword,
+                refTransactionCode: transactionId)
+            .AsTask());
     }
 }

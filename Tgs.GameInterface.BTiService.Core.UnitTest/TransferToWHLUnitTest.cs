@@ -1,15 +1,13 @@
 ﻿using System.Net;
 using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RichardSzalay.MockHttp;
 using Tgs.GameInterface.BTiService.Core.Exceptions;
 
 namespace Tgs.GameInterface.BTiService.Core.UnitTest;
 
-[TestClass]
 public class TransferToWHLUnitTest
 {
-    [TestMethod]
+    [Fact]
     public async Task 主錢包轉入遊戲廠商成功()
     {
         var apiUrl = new Uri("https://wallet.bti.bet/");
@@ -32,23 +30,21 @@ public class TransferToWHLUnitTest
 
         var sut = new GameApiClient(fakeHttpClient, fakeLog);
 
-        var actual = await sut
-            .TransferToWHLAsync(
-                apiUrl: apiUrl,
-                agentUserName: agentUserName,
-                agentPassword: agentPassword,
-                merchantCustomerCode: merchantCustomerCode,
-                refTransactionCode: refTransactionCode,
-                amount: amount)
-            .ConfigureAwait(false);
+        var actual = await sut.TransferToWHLAsync(
+            apiUrl: apiUrl,
+            agentUserName: agentUserName,
+            agentPassword: agentPassword,
+            merchantCustomerCode: merchantCustomerCode,
+            refTransactionCode: refTransactionCode,
+            amount: amount);
 
-        Assert.IsNotNull(actual);
-        Assert.AreEqual(refTransactionCode, actual.RefTransactionCode);
-        Assert.AreEqual(transactionId.ToString(), actual.TransactionId);
-        Assert.AreEqual(balance, actual.Balance);
+        Assert.NotNull(actual);
+        Assert.Equal(refTransactionCode, actual.RefTransactionCode);
+        Assert.Equal(transactionId.ToString(), actual.TransactionId);
+        Assert.Equal(balance, actual.Balance);
     }
 
-    [TestMethod]
+    [Fact]
     public async Task 其他錯誤()
     {
         var apiUrl = new Uri("https://wallet.bti.bet/");
@@ -69,16 +65,14 @@ public class TransferToWHLUnitTest
 
         var sut = new GameApiClient(fakeHttpClient, fakeLog);
 
-        _ = await Assert
-            .ThrowsExceptionAsync<GameProviderResponseErrorException>(() =>
-                sut.TransferToWHLAsync(
-                    apiUrl: apiUrl,
-                    agentUserName: agentUserName,
-                    agentPassword: agentPassword,
-                    merchantCustomerCode: merchantCustomerCode,
-                    refTransactionCode: refTransactionCode,
-                    amount: amount)
-                .AsTask())
-            .ConfigureAwait(false);
+        _ = await Assert.ThrowsAsync<GameProviderResponseErrorException>(
+            () => sut.TransferToWHLAsync(
+                apiUrl: apiUrl,
+                agentUserName: agentUserName,
+                agentPassword: agentPassword,
+                merchantCustomerCode: merchantCustomerCode,
+                refTransactionCode: refTransactionCode,
+                amount: amount)
+            .AsTask());
     }
 }

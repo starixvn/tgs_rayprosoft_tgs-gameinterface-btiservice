@@ -30,12 +30,7 @@ internal class GameDataApiClient : IGameDataApiClient
         };
     }
 
-    public async IAsyncEnumerable<BettingHistoryBet> BettingHistoryAsync(
-        Uri apiUrl,
-        string token,
-        DateTime startTime,
-        DateTime endTime,
-       [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    public async IAsyncEnumerable<BettingHistoryBet> BettingHistoryAsync(Uri apiUrl, string token, DateTime startTime, DateTime endTime, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         JsonObject request = new JsonObject
         {
@@ -73,14 +68,7 @@ internal class GameDataApiClient : IGameDataApiClient
         ;
     }
 
-    public async IAsyncEnumerable<BettingHistoryBet> BettingHistoryPaginationAsync(
-        Uri apiUrl,
-        string token,
-        DateTime startTime,
-        DateTime endTime,
-        int page = 0,
-        int pageLimit = 1000,
-       [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    public async IAsyncEnumerable<BettingHistoryBet> BettingHistoryPaginationAsync(Uri apiUrl, string token, DateTime startTime, DateTime endTime, int page = 0, int pageLimit = 1000, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         JsonObject request = new JsonObject
         {
@@ -127,11 +115,120 @@ internal class GameDataApiClient : IGameDataApiClient
         ;
     }
 
-    public async ValueTask<string> GetTokenAsync(
-        Uri apiUrl,
-        string agentUserName,
-        string agentPassword,
-        CancellationToken cancellationToken = default)
+    public async IAsyncEnumerable<BetSettled> GetHistoryBetsPagingAsync(Uri apiUrl, string token, DateTimeOffset startTime, DateTimeOffset endTime, int page = 0, int pageLimit = 1000, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
+        JsonObject request = new JsonObject
+        {
+            { "From", startTime.ToUniversalTime().ToString("s") },
+            { "To", endTime.ToUniversalTime().ToString("s") },
+            { "Pagination", new JsonObject {
+                {"page",page },
+                {"rowperpage",pageLimit } }
+            }
+        };
+
+        var url = new Uri(apiUrl, "/get-history-bets-paging");
+        var uriBuilder = new UriBuilder(url);
+        var query = HttpUtility.ParseQueryString(uriBuilder.Query);
+        query["token"] = token;
+        uriBuilder.Query = query.ToString();
+
+        var jsonNode = await PostAsync(
+            uriBuilder.Uri,
+            request,
+            "BettinghistoryPagination",
+            cancellationToken).ConfigureAwait(false);
+
+        if (jsonNode["errorCode"]?.GetValue<int>() is null or not 0)
+        {
+            throw new GameProviderResponseErrorException(jsonNode["errorCode"]?.ToString(), jsonNode["message"]?.ToString());
+        }
+
+        if (jsonNode["totalPages"]!.GetValue<int>() == -1)
+        {
+            yield break;
+        }
+
+        var bets = jsonNode["Bets"]?.AsArray();
+
+        if (bets is null || !bets.Any())
+        {
+            yield break;
+        }
+
+        foreach (var bet in bets)
+        {
+            if (bet is null)
+            {
+                continue;
+            }
+
+            yield return new BetSettled(
+                MerchantCustomerID: bet["MerchantCustomerID"]!.GetValue<string>(),
+                PurchaseID: bet["PurchaseID"]!.GetValue<string>(),
+                BetStatus: bet["BetStatus"]!.GetValue<string>(),
+                CreationDate: bet["CreationDate"]!.GetValue<DateTimeOffset>(),
+                BetSettledDate: bet["BetSettledDate"]!.GetValue<DateTimeOffset>(),
+                TotalStake: bet["TotalStake"]!.GetValue<decimal>(),
+                ValidStake: bet["ValidStake"]!.GetValue<decimal>(),
+                PL: bet["PL"]!.GetValue<decimal>(),
+                Return: bet["Return"]!.GetValue<decimal>(),
+                AdditionalData: bet.ToJsonString());
+        }
+    }
+
+    public async IAsyncEnumerable<BetUnsettled> GetOpenBetsPagingAsync(Uri apiUrl, string token, DateTimeOffset startTime, DateTimeOffset endTime, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
+        JsonObject request = new JsonObject
+        {
+            { "From", startTime.ToUniversalTime().ToString("s") },
+            { "To", endTime.ToUniversalTime().ToString("s") }
+        };
+
+        var url = new Uri(apiUrl, "/get-open-bets-paging");
+        var uriBuilder = new UriBuilder(url);
+        var query = HttpUtility.ParseQueryString(uriBuilder.Query);
+        query["token"] = token;
+        uriBuilder.Query = query.ToString();
+
+        var jsonNode = await PostAsync(
+            uriBuilder.Uri,
+            request,
+            "OpenBets",
+            cancellationToken).ConfigureAwait(false);
+
+        if (jsonNode["errorCode"]?.GetValue<int>() is null or not 0)
+        {
+            throw new GameProviderResponseErrorException(jsonNode["errorCode"]?.ToString(), jsonNode["message"]?.ToString());
+        }
+
+        var bets = jsonNode["Bets"]?.AsArray();
+
+        if (bets is null || !bets.Any())
+        {
+            yield break;
+        }
+
+        foreach (var bet in bets)
+        {
+            if (bet is null)
+            {
+                continue;
+            }
+
+            yield return new BetUnsettled(
+                MerchantCustomerID: bet["MerchantCustomerID"]!.GetValue<string>(),
+                PurchaseID: bet["PurchaseID"]!.GetValue<string>(),
+                BetStatus: bet["BetStatus"]!.GetValue<string>(),
+                CreationDate: bet["CreationDate"]!.GetValue<DateTimeOffset>(),
+                TotalStake: bet["TotalStake"]!.GetValue<decimal>(),
+                ValidStake: bet["ValidStake"]!.GetValue<decimal>(),
+                AdditionalData: bet.ToJsonString());
+        }
+        ;
+    }
+
+    public async ValueTask<string> GetTokenAsync(Uri apiUrl, string agentUserName, string agentPassword, CancellationToken cancellationToken = default)
     {
         JsonObject request = new JsonObject
         {
@@ -153,12 +250,7 @@ internal class GameDataApiClient : IGameDataApiClient
         ;
     }
 
-    public async IAsyncEnumerable<OpenBet> OpenBetsAsync(
-        Uri apiUrl,
-        string token,
-        DateTime startTime,
-        DateTime endTime,
-       [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    public async IAsyncEnumerable<OpenBet> OpenBetsAsync(Uri apiUrl, string token, DateTime startTime, DateTime endTime, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         JsonObject request = new JsonObject
         {
@@ -196,11 +288,7 @@ internal class GameDataApiClient : IGameDataApiClient
         ;
     }
 
-    private async ValueTask<JsonNode> PostAsync(
-        Uri apiUrl,
-        JsonObject request,
-        string logPrefix,
-        CancellationToken cancellationToken = default)
+    private async ValueTask<JsonNode> PostAsync(Uri apiUrl, JsonObject request, string logPrefix, CancellationToken cancellationToken = default)
     {
         logPrefix = $"{nameof(GameApiClient)}.{logPrefix}".ToLower();
 

@@ -1,15 +1,13 @@
 ﻿using System.Net;
 using System.Text.Json;
 using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RichardSzalay.MockHttp;
 
 namespace Tgs.GameInterface.BTiService.Core.UnitTest;
 
-[TestClass]
 public class GetTokenUnitTest
 {
-    [TestMethod]
+    [Fact]
     public async Task Normal_Process()
     {
         var apiUrl = new Uri("https://asia-east2-bq-data-api.cloudfunctions.net/");
@@ -30,14 +28,11 @@ public class GetTokenUnitTest
 
         var sut = new GameDataApiClient(fakeHttpClient, fakeLog);
 
-        var actual = await sut
-            .GetTokenAsync(
-                apiUrl: apiUrl,
-                agentUserName: agentUserName,
-                agentPassword: agentPassword)
-            .ConfigureAwait(false);
+        var actual = await sut.GetTokenAsync(
+            apiUrl: apiUrl,
+            agentUserName: agentUserName,
+            agentPassword: agentPassword);
 
-        Assert.IsNotNull(actual);
-        Assert.IsTrue(actual.Equals(response.token));
+        Assert.Equal(actual, response.token);
     }
 }

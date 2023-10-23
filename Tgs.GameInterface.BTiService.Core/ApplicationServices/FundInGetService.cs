@@ -25,6 +25,7 @@ internal class FundInGetService : IGetService<FundInQuery, FundResult>
         return new FundResult(
             RefTransactionCode: result.RefTransactionCode,
             TransactionId: result.TransactionId,
-            Balance: result.Balance);
+            Balance: result.Balance,
+            Resp: result.Resp);
     }
 }

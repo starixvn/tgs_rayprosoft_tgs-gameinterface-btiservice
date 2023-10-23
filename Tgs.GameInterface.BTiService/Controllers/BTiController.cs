@@ -51,7 +51,8 @@ public class BTiController : ControllerBase
         return new FundResultViewModel(
             RefTransactionCode: result.RefTransactionCode,
             TransactionId: result.TransactionId,
-            Balance: result.Balance);
+            Balance: result.Balance,
+            Resp: result.Resp);
     }
 
     /// <summary>
@@ -75,8 +76,8 @@ public class BTiController : ControllerBase
     /// </remarks>
     [HttpPost("fund/out", Name = "FundOut")]
     public async ValueTask<FundResultViewModel> FundOutAsync(
-            [FromServices] IGetService<FundOutQuery, FundResult> service,
-            FundViewModel source)
+        [FromServices] IGetService<FundOutQuery, FundResult> service,
+        FundViewModel source)
     {
         var query = new FundOutQuery(
             ApiUrl: source.ApiUrl,
@@ -95,7 +96,8 @@ public class BTiController : ControllerBase
         return new FundResultViewModel(
             RefTransactionCode: result.RefTransactionCode,
             TransactionId: result.TransactionId,
-            Balance: result.Balance);
+            Balance: result.Balance,
+            Resp: result.Resp);
     }
 
     /// <summary>
@@ -228,8 +230,8 @@ public class BTiController : ControllerBase
     /// </remarks>
     [HttpPost("game/authtoken", Name = "GameGetAuthToken")]
     public async ValueTask<GameAuthTokenResultViewModel> GameAuthTokenAsync(
-            [FromServices] IGetService<GameAuthTokenQuery, GameAuthTokenResult> service,
-            GameAuthTokenViewModel model)
+        [FromServices] IGetService<GameAuthTokenQuery, GameAuthTokenResult> service,
+        GameAuthTokenViewModel model)
     {
         var query = new GameAuthTokenQuery(
             ApiUrl: model.ApiUrl,
@@ -272,8 +274,8 @@ public class BTiController : ControllerBase
     /// </remarks>
     [HttpPost("game/history/settled", Name = "GameHistorySettled")]
     public async IAsyncEnumerable<GameHistorySettledResultViewModel> GameHistorySettledAsync(
-            [FromServices] IQueryService<GameHistorySettledQuery, GameHistorySettledResult> service,
-            GameHistorySettledViewModel model)
+        [FromServices] IQueryService<GameHistorySettledQuery, GameHistorySettledResult> service,
+        GameHistorySettledViewModel model)
     {
         var query = new GameHistorySettledQuery(
             TokenApiUrl: model.TokenApiUrl,
@@ -371,6 +373,130 @@ public class BTiController : ControllerBase
                 Bet: gameRecord.Bet,
                 ValidBet: gameRecord.ValidBet,
                 AdditionalData: gameRecord.AdditionalData);
+        }
+    }
+
+    /// <summary>
+    /// Games the history settled asynchronous.
+    /// </summary>
+    /// <param name="service">The service.</param>
+    /// <param name="model">The model.</param>
+    /// <returns></returns>
+    /// <remarks>
+    /// <b>Example</b><br />
+    ///
+    ///     Post
+    ///
+    ///         {
+    ///             "dataApiUrl": "https://data-api.442hattrick.com/",
+    ///             "agentUserName": "PegaGaming_TGSPB1",
+    ///             "agentPassword": "7Yd1deTAiNh8",
+    ///             "startTime": "2023-10-23T11:00:00+08:00",
+    ///             "endTime": "2023-10-23T12:00:00+08:00",
+    ///             "page": 0,
+    ///             "pageLimit": 1000
+    ///         }
+    /// </remarks>
+    [HttpPost("game/wager/settled", Name = "GameWagerSettled")]
+    public async IAsyncEnumerable<GameWagerResultViewModel> GameWagerSettledAsync(
+        [FromServices] IQueryService<GameWagerSettledQuery, GameWagerResult> service,
+        GameWagerSettledViewModel model)
+    {
+        var query = new GameWagerSettledQuery(
+            DataApiUrl: model.DataApiUrl,
+            model.AgentUserName,
+            model.AgentPassword,
+            StartTime: model.StartTime,
+            EndTime: model.EndTime,
+            Page: model.Page,
+            PageLimit: model.PageLimit);
+
+        var gameWagers = await service.QueryAsync(
+            query: query,
+            cancellationToken: HttpContext.RequestAborted)
+            .ToArrayAsync(
+            cancellationToken: HttpContext.RequestAborted)
+            .ConfigureAwait(false);
+
+        if (!gameWagers.Any())
+        {
+            yield break;
+        }
+
+        foreach (var gameWager in gameWagers)
+        {
+            yield return new GameWagerResultViewModel(
+                PlayerCode: gameWager.PlayerCode,
+                ExternalWagerId: gameWager.ExternalWagerId,
+                IsClosed: gameWager.IsClosed,
+                Status: gameWager.Status,
+                ExternalCreatedOn: gameWager.ExternalCreatedOn,
+                ExternalClosedOn: gameWager.ExternalClosedOn,
+                Bet: gameWager.Bet,
+                ValidBet: gameWager.ValidBet,
+                Settle: gameWager.Settle,
+                WinLoss: gameWager.WinLoss,
+                AdditionalData: gameWager.AdditionalData);
+        }
+    }
+
+    /// <summary>
+    /// Games the wager unsettled asynchronous.
+    /// </summary>
+    /// <param name="service">The service.</param>
+    /// <param name="model">The model.</param>
+    /// <returns></returns>
+    /// <remarks>
+    /// <b>Example</b><br />
+    ///
+    ///     Post
+    ///
+    ///         {
+    ///             "dataApiUrl": "https://data-api.442hattrick.com/",
+    ///             "agentUserName": "PegaGaming_TGSPB1",
+    ///             "agentPassword": "7Yd1deTAiNh8",
+    ///             "startTime": "2023-10-23T11:00:00+08:00",
+    ///             "endTime": "2023-10-23T12:00:00+08:00"
+    ///         }
+    /// </remarks>
+    [HttpPost("game/wager/unsettled", Name = "GameWagerUnsettled")]
+    public async IAsyncEnumerable<GameWagerResultViewModel> GameWagerUnsettledAsync(
+        [FromServices] IQueryService<GameWagerUnsettledQuery, GameWagerResult> service,
+        GameWagerUnsettledViewModel model)
+    {
+        var query = new GameWagerUnsettledQuery(
+            DataApiUrl: model.DataApiUrl,
+            model.AgentUserName,
+            model.AgentPassword,
+            StartTime: model.StartTime,
+            EndTime: model.EndTime);
+
+        var gameWagers = await service.QueryAsync(
+            query: query,
+            cancellationToken: HttpContext.RequestAborted)
+            .ToArrayAsync(
+            cancellationToken: HttpContext.RequestAborted)
+            .ConfigureAwait(false);
+
+        if (!gameWagers.Any())
+        {
+            yield break;
+        }
+
+        foreach (var gameWager in gameWagers)
+        {
+            yield return new GameWagerResultViewModel(
+                PlayerCode: gameWager.PlayerCode,
+                ExternalWagerId: gameWager.ExternalWagerId,
+                IsClosed: gameWager.IsClosed,
+                Status: gameWager.Status,
+                ExternalCreatedOn: gameWager.ExternalCreatedOn,
+                ExternalClosedOn: gameWager.ExternalClosedOn,
+                Bet: gameWager.Bet,
+                ValidBet: gameWager.ValidBet,
+                Settle: gameWager.Settle,
+                WinLoss: gameWager.WinLoss,
+                AdditionalData: gameWager.AdditionalData);
         }
     }
 }

@@ -1,15 +1,14 @@
 ﻿using System.Net;
 using System.Web;
 using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RichardSzalay.MockHttp;
+using Tgs.GameInterface.BTiService.Core.Models;
 
 namespace Tgs.GameInterface.BTiService.Core.UnitTest;
 
-[TestClass]
 public class OpenBetsUnitTest
 {
-    [TestMethod]
+    [Fact]
     public async Task Normal_Process()
     {
         var apiUrl = new Uri("https://get-open-bets-d5nlg5buca-de.a.run.app/");
@@ -33,16 +32,15 @@ public class OpenBetsUnitTest
 
         var sut = new GameDataApiClient(fakeHttpClient, fakeLog);
 
-        var actual = await sut
-            .OpenBetsAsync(
-                apiUrl: apiUrl,
-                token: token,
-                startTime: startTime,
-                endTime: endTime)
+        var actual = await sut.OpenBetsAsync(
+            apiUrl: apiUrl,
+            token: token,
+            startTime: startTime,
+            endTime: endTime)
             .ToArrayAsync()
-            .ConfigureAwait(false);
+            ?? Enumerable.Empty<OpenBet>();
 
-        Assert.IsNotNull(actual);
-        Assert.IsTrue(actual.Length > 0);
+        Assert.NotNull(actual);
+        Assert.True(actual.Any());
     }
 }

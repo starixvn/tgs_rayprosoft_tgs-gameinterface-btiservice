@@ -1,15 +1,13 @@
 ﻿using System.Net;
 using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RichardSzalay.MockHttp;
 using Tgs.GameInterface.BTiService.Core.Exceptions;
 
 namespace Tgs.GameInterface.BTiService.Core.UnitTest;
 
-[TestClass]
 public class CreateNewUserUnitTest
 {
-    [TestMethod]
+    [Fact]
     public async Task 玩家已經存在()
     {
         var apiUrl = new Uri("https://wallet.bti.bet/");
@@ -30,17 +28,16 @@ public class CreateNewUserUnitTest
 
         var actual = await sut
             .GetBalanceAsync(
-                apiUrl: apiUrl,
-                agentUserName: agentUserName,
-                agentPassword: agentPassword,
-                merchantCustomerCode: merchantCustomerCode)
-            .ConfigureAwait(false);
+            apiUrl: apiUrl,
+            agentUserName: agentUserName,
+            agentPassword: agentPassword,
+            merchantCustomerCode: merchantCustomerCode);
 
-        Assert.IsNotNull(actual);
-        Assert.IsFalse(actual.IsPlayerExist);
+        Assert.NotNull(actual);
+        Assert.False(actual.IsPlayerExist);
     }
 
-    [TestMethod]
+    [Fact]
     public async Task 創建玩家成功()
     {
         var apiUrl = new Uri("https://wallet.bti.bet/");
@@ -64,22 +61,20 @@ public class CreateNewUserUnitTest
 
         var sut = new GameApiClient(fakeHttpClient, fakeLog);
 
-        await sut
-            .CreateNewUserAsync(
-                apiUrl: apiUrl,
-                agentUserName: agentUserName,
-                agentPassword: agentPassword,
-                merchantCustomerCode: merchantCustomerCode,
-                currencyCode: currencyCode,
-                firstName: firstName,
-                lastName: lastName,
-                countryCode: countryCode,
-                city: city,
-                customerDefaultLanguage: customerDefaultLanguage)
-            .ConfigureAwait(false);
+        await sut.CreateNewUserAsync(
+            apiUrl: apiUrl,
+            agentUserName: agentUserName,
+            agentPassword: agentPassword,
+            merchantCustomerCode: merchantCustomerCode,
+            currencyCode: currencyCode,
+            firstName: firstName,
+            lastName: lastName,
+            countryCode: countryCode,
+            city: city,
+            customerDefaultLanguage: customerDefaultLanguage);
     }
 
-    [TestMethod]
+    [Fact]
     public async Task 其他錯誤()
     {
         var apiUrl = new Uri("https://wallet.bti.bet/");
@@ -103,20 +98,18 @@ public class CreateNewUserUnitTest
 
         var sut = new GameApiClient(fakeHttpClient, fakeLog);
 
-        _ = await Assert
-            .ThrowsExceptionAsync<GameProviderResponseErrorException>(() =>
-                sut.CreateNewUserAsync(
-                    apiUrl: apiUrl,
-                    agentUserName: agentUserName,
-                    agentPassword: agentPassword,
-                    merchantCustomerCode: merchantCustomerCode,
-                    currencyCode: currencyCode,
-                    firstName: firstName,
-                    lastName: lastName,
-                    countryCode: countryCode,
-                    city: city,
-                    customerDefaultLanguage: customerDefaultLanguage)
-                .AsTask())
-            .ConfigureAwait(false);
+        _ = await Assert.ThrowsAsync<GameProviderResponseErrorException>(
+            () => sut.CreateNewUserAsync(
+                apiUrl: apiUrl,
+                agentUserName: agentUserName,
+                agentPassword: agentPassword,
+                merchantCustomerCode: merchantCustomerCode,
+                currencyCode: currencyCode,
+                firstName: firstName,
+                lastName: lastName,
+                countryCode: countryCode,
+                city: city,
+                customerDefaultLanguage: customerDefaultLanguage)
+            .AsTask());
     }
 }

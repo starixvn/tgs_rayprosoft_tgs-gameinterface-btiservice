@@ -18,6 +18,8 @@ internal class GameInterfaceBTiGrpcService : GameInterfaceBTiService.GameInterfa
     private readonly IGetService<GameAuthTokenQuery, GameAuthTokenResult> _gameGetAuthTokenService;
     private readonly IQueryService<GameHistorySettledQuery, GameHistorySettledResult> _gameHistorySettledService;
     private readonly IQueryService<GameHistoryUnsettledQuery, GameHistoryUnsettledResult> _gameHistoryUnsettledService;
+    private readonly IQueryService<GameWagerSettledQuery, GameWagerResult> _gameWagerSettledService;
+    private readonly IQueryService<GameWagerUnsettledQuery, GameWagerResult> _gameWagerUnsettledService;
 
     public GameInterfaceBTiGrpcService(
         ILogger<GameInterfaceBTiGrpcService> logger,
@@ -28,7 +30,9 @@ internal class GameInterfaceBTiGrpcService : GameInterfaceBTiService.GameInterfa
         IGetService<PlayerBalanceQuery, PlayerBalanceResult> playerBalanceService,
         IGetService<GameAuthTokenQuery, GameAuthTokenResult> gameGetAuthTokenService,
         IQueryService<GameHistorySettledQuery, GameHistorySettledResult> gameHistorySettledService,
-        IQueryService<GameHistoryUnsettledQuery, GameHistoryUnsettledResult> gameHistoryUnsettledService
+        IQueryService<GameHistoryUnsettledQuery, GameHistoryUnsettledResult> gameHistoryUnsettledService,
+        IQueryService<GameWagerSettledQuery, GameWagerResult> gameWagerSettledService,
+        IQueryService<GameWagerUnsettledQuery, GameWagerResult> gameWagerUnsettledService
         )
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -40,6 +44,8 @@ internal class GameInterfaceBTiGrpcService : GameInterfaceBTiService.GameInterfa
         _gameGetAuthTokenService = gameGetAuthTokenService ?? throw new ArgumentNullException(nameof(gameGetAuthTokenService));
         _gameHistorySettledService = gameHistorySettledService ?? throw new ArgumentNullException(nameof(gameHistorySettledService));
         _gameHistoryUnsettledService = gameHistoryUnsettledService ?? throw new ArgumentNullException(nameof(gameHistoryUnsettledService));
+        _gameWagerSettledService = gameWagerSettledService ?? throw new ArgumentNullException(nameof(gameWagerSettledService));
+        _gameWagerUnsettledService = gameWagerUnsettledService ?? throw new ArgumentNullException(nameof(gameWagerUnsettledService));
     }
 
     public override Task<CheckingServiceReply> CheckingService(CheckingServiceRequest request, ServerCallContext context)
@@ -62,17 +68,17 @@ internal class GameInterfaceBTiGrpcService : GameInterfaceBTiService.GameInterfa
             RefTransactionCode: request.RefTransactionCode,
             Amount: request.Amount.ToDecimal().GetValueOrDefault(0));
 
-        var result = await _fundInService
-                .GetAsync(
-                    query: query,
-                    cancellationToken: context.CancellationToken)
-                .ConfigureAwait(false);
+        var result = await _fundInService.GetAsync(
+            query: query,
+            cancellationToken: context.CancellationToken)
+            .ConfigureAwait(false);
 
         return new FundReply()
         {
             RefTransactionCode = result.RefTransactionCode,
             TransactionId = result.TransactionId,
-            Balance = result.Balance
+            Balance = result.Balance,
+            Resp = result.Resp
         };
     }
 
@@ -86,21 +92,21 @@ internal class GameInterfaceBTiGrpcService : GameInterfaceBTiService.GameInterfa
             RefTransactionCode: request.RefTransactionCode,
             Amount: request.Amount.ToDecimal().GetValueOrDefault(0));
 
-        var result = await _fundOutService
-                .GetAsync(
-                    query: query,
-                    cancellationToken: context.CancellationToken)
-                .ConfigureAwait(false);
+        var result = await _fundOutService.GetAsync(
+            query: query,
+            cancellationToken: context.CancellationToken)
+            .ConfigureAwait(false);
 
         return new FundReply()
         {
             RefTransactionCode = result.RefTransactionCode,
             TransactionId = result.TransactionId,
-            Balance = result.Balance
+            Balance = result.Balance,
+            Resp = result.Resp
         };
     }
 
-    public override async Task<FundStatusReply> FundStatus(FundStatusRequest request, ServerCallContext context)
+    public override async Task<BaseReply> FundStatus(FundStatusRequest request, ServerCallContext context)
     {
         var query = new FundStatusQuery(
             ApiUrl: new(request.ApiUrl),
@@ -108,15 +114,14 @@ internal class GameInterfaceBTiGrpcService : GameInterfaceBTiService.GameInterfa
             AgentPassword: request.AgentPassword,
             RefTransactionCode: request.RefTransactionCode);
 
-        var result = await _fundStatusService
-                .GetAsync(
-                    query: query,
-                    cancellationToken: context.CancellationToken)
-                .ConfigureAwait(false);
+        var result = await _fundStatusService.GetAsync(
+            query: query,
+            cancellationToken: context.CancellationToken)
+            .ConfigureAwait(false);
 
-        return new FundStatusReply()
+        return new BaseReply()
         {
-            IsOrderExist = result
+            Status = result
         };
     }
 
@@ -128,11 +133,10 @@ internal class GameInterfaceBTiGrpcService : GameInterfaceBTiService.GameInterfa
             AgentPassword: request.AgentPassword,
             MerchantCustomerCode: request.MerchantCustomerCode);
 
-        var result = await _gameGetAuthTokenService
-                .GetAsync(
-                    query: query,
-                    cancellationToken: context.CancellationToken)
-                .ConfigureAwait(false);
+        var result = await _gameGetAuthTokenService.GetAsync(
+            query: query,
+            cancellationToken: context.CancellationToken)
+            .ConfigureAwait(false);
 
         return new GameAuthTokenReply()
         {
@@ -153,12 +157,12 @@ internal class GameInterfaceBTiGrpcService : GameInterfaceBTiService.GameInterfa
             Page: request.Page,
             PageLimit: request.PageLimit);
 
-        var gameHistorySettleds = await _gameHistorySettledService
-                .QueryAsync(
-                    query: query,
-                    cancellationToken: context.CancellationToken)
-                .ToArrayAsync(context.CancellationToken)
-                .ConfigureAwait(false);
+        var gameHistorySettleds = await _gameHistorySettledService.QueryAsync(
+            query: query,
+            cancellationToken: context.CancellationToken)
+            .ToArrayAsync(context.CancellationToken)
+            .ConfigureAwait(false);
+
         var reply = new GameHistorySettledReply();
 
         if (gameHistorySettleds.Any())
@@ -196,12 +200,11 @@ internal class GameInterfaceBTiGrpcService : GameInterfaceBTiService.GameInterfa
             StartTime: request.StartTime.ToDateTime(),
             EndTime: request.EndTime.ToDateTime());
 
-        var gameHistoryUnsettleds = await _gameHistoryUnsettledService
-                .QueryAsync(
-                    query: query,
-                    cancellationToken: context.CancellationToken)
-                .ToArrayAsync(context.CancellationToken)
-                .ConfigureAwait(false);
+        var gameHistoryUnsettleds = await _gameHistoryUnsettledService.QueryAsync(
+            query: query,
+            cancellationToken: context.CancellationToken)
+            .ToArrayAsync(context.CancellationToken)
+            .ConfigureAwait(false);
         var reply = new GameHistoryUnsettledReply();
 
         if (gameHistoryUnsettleds.Any())
@@ -223,6 +226,90 @@ internal class GameInterfaceBTiGrpcService : GameInterfaceBTiService.GameInterfa
         return reply;
     }
 
+    public override async Task<GameWagerReply> GameWagerSettled(GameWagerSettledRequest request, ServerCallContext context)
+    {
+        var query = new GameWagerSettledQuery(
+            DataApiUrl: new(request.DataApiUrl),
+            AgentUserName: request.AgentUserName,
+            AgentPassword: request.AgentPassword,
+            StartTime: request.StartTime.ToDateTimeOffset(),
+            EndTime: request.EndTime.ToDateTimeOffset(),
+            Page: request.Page,
+            PageLimit: request.PageLimit);
+
+        var gameWagers = await _gameWagerSettledService.QueryAsync(
+            query: query,
+            cancellationToken: context.CancellationToken)
+            .ToArrayAsync(context.CancellationToken)
+            .ConfigureAwait(false);
+
+        var reply = new GameWagerReply();
+
+        if (gameWagers.Any())
+        {
+            foreach (var gameWager in gameWagers)
+            {
+                reply.Items.Add(new GameWagerInfo()
+                {
+                    PlayerCode = gameWager.PlayerCode,
+                    ExternalWagerId = gameWager.ExternalWagerId,
+                    IsClosed = gameWager.IsClosed,
+                    Status = (GameHistoryStatus)Enum.Parse(typeof(GameHistoryStatus), gameWager.Status.Replace(" ", string.Empty), true),
+                    ExternalCreatedOn = gameWager.ExternalCreatedOn.ToTimestamp(),
+                    ExternalClosedOn = gameWager.ExternalClosedOn.ToTimestamp(),
+                    Bet = gameWager.Bet,
+                    ValidBet = gameWager.ValidBet,
+                    Settle = gameWager.Settle,
+                    WinLoss = gameWager.WinLoss,
+                    AdditionalData = gameWager.AdditionalData
+                });
+            }
+        }
+
+        return reply;
+    }
+
+    public override async Task<GameWagerReply> GameWagerUnsettled(GameWagerUnsettledRequest request, ServerCallContext context)
+    {
+        var query = new GameWagerUnsettledQuery(
+            DataApiUrl: new(request.DataApiUrl),
+            AgentUserName: request.AgentUserName,
+            AgentPassword: request.AgentPassword,
+            StartTime: request.StartTime.ToDateTimeOffset(),
+            EndTime: request.EndTime.ToDateTimeOffset());
+
+        var gameWagers = await _gameWagerUnsettledService.QueryAsync(
+            query: query,
+            cancellationToken: context.CancellationToken)
+            .ToArrayAsync(context.CancellationToken)
+            .ConfigureAwait(false);
+
+        var reply = new GameWagerReply();
+
+        if (gameWagers.Any())
+        {
+            foreach (var gameWager in gameWagers)
+            {
+                reply.Items.Add(new GameWagerInfo()
+                {
+                    PlayerCode = gameWager.PlayerCode,
+                    ExternalWagerId = gameWager.ExternalWagerId,
+                    IsClosed = gameWager.IsClosed,
+                    Status = (GameHistoryStatus)Enum.Parse(typeof(GameHistoryStatus), gameWager.Status.Replace(" ", string.Empty), true),
+                    ExternalCreatedOn = gameWager.ExternalCreatedOn.ToTimestamp(),
+                    ExternalClosedOn = gameWager.ExternalClosedOn.ToTimestamp(),
+                    Bet = gameWager.Bet,
+                    ValidBet = gameWager.ValidBet,
+                    Settle = gameWager.Settle,
+                    WinLoss = gameWager.WinLoss,
+                    AdditionalData = gameWager.AdditionalData
+                });
+            }
+        }
+
+        return reply;
+    }
+
     public override async Task<PlayerBalanceReply> PlayerBalance(PlayerBalanceRequest request, ServerCallContext context)
     {
         var query = new PlayerBalanceQuery(
@@ -231,11 +318,10 @@ internal class GameInterfaceBTiGrpcService : GameInterfaceBTiService.GameInterfa
             AgentPassword: request.AgentPassword,
             MerchantCustomerCode: request.MerchantCustomerCode);
 
-        var result = await _playerBalanceService
-                .GetAsync(
-                    query: query,
-                    cancellationToken: context.CancellationToken)
-                .ConfigureAwait(false);
+        var result = await _playerBalanceService.GetAsync(
+            query: query,
+            cancellationToken: context.CancellationToken)
+            .ConfigureAwait(false);
 
         return new PlayerBalanceReply()
         {
@@ -254,11 +340,10 @@ internal class GameInterfaceBTiGrpcService : GameInterfaceBTiService.GameInterfa
             MerchantCustomerCode: request.MerchantCustomerCode,
             Currency: request.Currency);
 
-        await _playerCreateService
-                .ExecuteAsync(
-                    command: command,
-                    cancellationToken: context.CancellationToken)
-                .ConfigureAwait(false);
+        await _playerCreateService.ExecuteAsync(
+            command: command,
+            cancellationToken: context.CancellationToken)
+            .ConfigureAwait(false);
 
         return new BaseReply()
         {
