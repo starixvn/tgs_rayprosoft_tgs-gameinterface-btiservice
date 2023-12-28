@@ -14,12 +14,6 @@ public interface IGameInterfaceBTiClient
 
     ValueTask<GameAuthTokenReply> GameAuthTokenAsync(Uri apiUrl, string agentUserName, string agentPassword, string merchantCustomerCode, CancellationToken cancellationToken = default);
 
-    [Obsolete("已過時，請改使用GameWagerSettledAsync")]
-    IAsyncEnumerable<GameHistorySettled> GameHistorySettledAsync(Uri tokenApiUrl, Uri historyBetsPagingApiUrl, string agentUserName, string agentPassword, DateTime startTime, DateTime endTime, int page = 0, int pageLimit = 1000, CancellationToken cancellationToken = default);
-
-    [Obsolete("已過時，請改使用GameWagerUnsettledAsync")]
-    IAsyncEnumerable<GameHistoryUnsettled> GameHistoryUnsettledAsync(Uri tokenApiUrl, Uri openBetsApiUrl, string agentUserName, string agentPassword, DateTime startTime, DateTime endTime, CancellationToken cancellationToken = default);
-
     IAsyncEnumerable<GameWagerInfo> GameWagerSettledAsync(Uri dataApiUrl, string agentUserName, string agentPassword, DateTimeOffset startTime, DateTimeOffset endTime, int page = 0, int pageLimit = 1000, CancellationToken cancellationToken = default);
 
     IAsyncEnumerable<GameWagerInfo> GameWagerUnsettledAsync(Uri dataApiUrl, string agentUserName, string agentPassword, DateTimeOffset startTime, DateTimeOffset endTime, CancellationToken cancellationToken = default);

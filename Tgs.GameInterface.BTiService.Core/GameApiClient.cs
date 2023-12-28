@@ -7,19 +7,10 @@ using Tgs.GameInterface.BTiService.Core.Models;
 
 namespace Tgs.GameInterface.BTiService.Core;
 
-internal class GameApiClient : IGameApiClient
+internal class GameApiClient(
+    HttpClient client,
+    ILogger<GameApiClient> logger) : IGameApiClient
 {
-    private readonly HttpClient _client;
-    private readonly ILogger<GameApiClient> _logger;
-
-    public GameApiClient(
-        HttpClient client,
-        ILogger<GameApiClient> logger)
-    {
-        _client = client ?? throw new ArgumentNullException(nameof(client));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-    }
-
     public async ValueTask<bool> CheckTransactionAsync(
         Uri apiUrl,
         string agentUserName,
@@ -280,7 +271,7 @@ internal class GameApiClient : IGameApiClient
 
         HttpContent content = new FormUrlEncodedContent(parameters);
 
-        var httpResponseMessage = await _client.PostAsync(apiUrl, content, cancellationToken);
+        var httpResponseMessage = await client.PostAsync(apiUrl, content, cancellationToken);
 
         sw.Stop();
 
@@ -309,7 +300,7 @@ internal class GameApiClient : IGameApiClient
             RecordedOn = DateTimeOffset.UtcNow
         };
 
-        _logger.LogInformation("{apiLogEvent}", System.Text.Json.JsonSerializer.Serialize(apiLogEvent));
+        logger.LogInformation("{apiLogEvent}", System.Text.Json.JsonSerializer.Serialize(apiLogEvent));
 
         _ = httpResponseMessage.EnsureSuccessStatusCode();
 

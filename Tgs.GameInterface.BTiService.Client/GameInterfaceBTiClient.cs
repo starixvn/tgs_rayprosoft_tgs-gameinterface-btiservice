@@ -4,15 +4,9 @@ using Tgs.GameInterface.BTiService.Protos;
 
 namespace Tgs.GameInterface.BTiService.Client;
 
-internal class GameInterfaceBTiClient : IGameInterfaceBTiClient
+internal class GameInterfaceBTiClient(
+    GameInterfaceBTiService.GameInterfaceBTiServiceClient client) : IGameInterfaceBTiClient
 {
-    private readonly GameInterfaceBTiService.GameInterfaceBTiServiceClient _client;
-
-    public GameInterfaceBTiClient(GameInterfaceBTiService.GameInterfaceBTiServiceClient client)
-    {
-        _client = client ?? throw new ArgumentNullException(nameof(client));
-    }
-
     public async ValueTask<string> CheckingServiceAsync(string machineName, CancellationToken cancellationToken = default)
     {
         var request = new CheckingServiceRequest
@@ -20,7 +14,7 @@ internal class GameInterfaceBTiClient : IGameInterfaceBTiClient
             MachineName = machineName,
         };
 
-        var reply = await _client
+        var reply = await client
             .CheckingServiceAsync(
                 request: request,
                 cancellationToken: cancellationToken)
@@ -41,7 +35,7 @@ internal class GameInterfaceBTiClient : IGameInterfaceBTiClient
             Amount = amount
         };
 
-        return await _client
+        return await client
                 .FundInAsync(
                     request: request,
                     cancellationToken: cancellationToken)
@@ -60,7 +54,7 @@ internal class GameInterfaceBTiClient : IGameInterfaceBTiClient
             Amount = amount
         };
 
-        return await _client
+        return await client
                 .FundOutAsync(
                     request: request,
                     cancellationToken: cancellationToken)
@@ -77,7 +71,7 @@ internal class GameInterfaceBTiClient : IGameInterfaceBTiClient
             RefTransactionCode = refTransactionCode
         };
 
-        var reply = await _client
+        var reply = await client
                 .FundStatusAsync(
                     request: request,
                     cancellationToken: cancellationToken)
@@ -96,71 +90,11 @@ internal class GameInterfaceBTiClient : IGameInterfaceBTiClient
             MerchantCustomerCode = merchantCustomerCode
         };
 
-        return await _client
+        return await client
                 .GameAuthTokenAsync(
                     request: request,
                     cancellationToken: cancellationToken)
                 .ConfigureAwait(false);
-    }
-
-    public async IAsyncEnumerable<GameHistorySettled> GameHistorySettledAsync(Uri tokenApiUrl, Uri historyBetsPagingApiUrl, string agentUserName, string agentPassword, DateTime startTime, DateTime endTime, int page = 0, int pageLimit = 1000, [EnumeratorCancellation] CancellationToken cancellationToken = default)
-    {
-        var request = new GameHistorySettledRequest()
-        {
-            TokenApiUrl = tokenApiUrl.ToString(),
-            HistoryBetsPagingApiUrl = historyBetsPagingApiUrl.ToString(),
-            AgentUserName = agentUserName,
-            AgentPassword = agentPassword,
-            StartTime = startTime.ToTimestamp(),
-            EndTime = endTime.ToTimestamp(),
-            Page = page,
-            PageLimit = pageLimit
-        };
-
-        var reply = await _client
-                .GameHistorySettledAsync(
-                    request: request,
-                    cancellationToken: cancellationToken)
-                .ConfigureAwait(false);
-
-        if (!reply.Items.Any())
-        {
-            yield break;
-        }
-
-        foreach (var item in reply.Items)
-        {
-            yield return item;
-        }
-    }
-
-    public async IAsyncEnumerable<GameHistoryUnsettled> GameHistoryUnsettledAsync(Uri tokenApiUrl, Uri openBetsApiUrl, string agentUserName, string agentPassword, DateTime startTime, DateTime endTime, [EnumeratorCancellation] CancellationToken cancellationToken = default)
-    {
-        var request = new GameHistoryUnsettledRequest()
-        {
-            TokenApiUrl = tokenApiUrl.ToString(),
-            OpenBetsApiUrl = openBetsApiUrl.ToString(),
-            AgentUserName = agentUserName,
-            AgentPassword = agentPassword,
-            StartTime = startTime.ToTimestamp(),
-            EndTime = endTime.ToTimestamp()
-        };
-
-        var reply = await _client
-                .GameHistoryUnsettledAsync(
-                    request: request,
-                    cancellationToken: cancellationToken)
-                .ConfigureAwait(false);
-
-        if (!reply.Items.Any())
-        {
-            yield break;
-        }
-
-        foreach (var item in reply.Items)
-        {
-            yield return item;
-        }
     }
 
     public async IAsyncEnumerable<GameWagerInfo> GameWagerSettledAsync(Uri dataApiUrl, string agentUserName, string agentPassword, DateTimeOffset startTime, DateTimeOffset endTime, int page = 0, int pageLimit = 1000, [EnumeratorCancellation] CancellationToken cancellationToken = default)
@@ -176,17 +110,18 @@ internal class GameInterfaceBTiClient : IGameInterfaceBTiClient
             PageLimit = pageLimit
         };
 
-        var reply = await _client.GameWagerSettledAsync(
+        var reply = await client.GameWagerSettledAsync(
             request: request,
             cancellationToken: cancellationToken)
             .ConfigureAwait(false);
 
-        if (!reply.Items.Any())
+        var items = reply.Items ?? Enumerable.Empty<GameWagerInfo>();
+        if (!items.Any())
         {
             yield break;
         }
 
-        foreach (var item in reply.Items)
+        foreach (var item in items)
         {
             yield return item;
         }
@@ -203,17 +138,18 @@ internal class GameInterfaceBTiClient : IGameInterfaceBTiClient
             EndTime = endTime.ToTimestamp()
         };
 
-        var reply = await _client.GameWagerUnsettledAsync(
+        var reply = await client.GameWagerUnsettledAsync(
             request: request,
             cancellationToken: cancellationToken)
             .ConfigureAwait(false);
 
-        if (!reply.Items.Any())
+        var items = reply.Items ?? Enumerable.Empty<GameWagerInfo>();
+        if (!items.Any())
         {
             yield break;
         }
 
-        foreach (var item in reply.Items)
+        foreach (var item in items)
         {
             yield return item;
         }
@@ -229,7 +165,7 @@ internal class GameInterfaceBTiClient : IGameInterfaceBTiClient
             MerchantCustomerCode = merchantCustomerCode
         };
 
-        return await _client
+        return await client
                 .PlayerBalanceAsync(
                     request: request,
                     cancellationToken: cancellationToken)
@@ -248,7 +184,7 @@ internal class GameInterfaceBTiClient : IGameInterfaceBTiClient
             Currency = currency
         };
 
-        _ = await _client
+        _ = await client
                 .PlayerCreateAsync(
                     request: request,
                     cancellationToken: cancellationToken)

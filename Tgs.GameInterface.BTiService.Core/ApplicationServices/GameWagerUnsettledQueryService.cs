@@ -4,26 +4,19 @@ using Tgs.ServiceUtility;
 
 namespace Tgs.GameInterface.BTiService.Core.ApplicationServices;
 
-internal class GameWagerUnsettledQueryService : IQueryService<GameWagerUnsettledQuery, GameWagerResult>
+internal class GameWagerUnsettledQueryService(
+    IGameDataApiClient client) : IQueryService<GameWagerUnsettledQuery, GameWagerResult>
 {
-    private readonly IGameDataApiClient _client;
-
-    public GameWagerUnsettledQueryService(
-        IGameDataApiClient client)
-    {
-        _client = client ?? throw new ArgumentNullException(nameof(client));
-    }
-
     public async IAsyncEnumerable<GameWagerResult> QueryAsync(GameWagerUnsettledQuery query, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
-        var token = await _client.GetTokenAsync(
+        var token = await client.GetTokenAsync(
             apiUrl: query.DataApiUrl,
             agentUserName: query.AgentUserName,
             agentPassword: query.AgentPassword,
             cancellationToken)
             .ConfigureAwait(false);
 
-        var betUnsettleds = await _client.GetOpenBetsPagingAsync(
+        var betUnsettleds = await client.GetOpenBetsPagingAsync(
             apiUrl: query.DataApiUrl,
             token: token,
             startTime: query.StartTime,

@@ -68,53 +68,6 @@ internal class GameDataApiClient : IGameDataApiClient
         ;
     }
 
-    public async IAsyncEnumerable<BettingHistoryBet> BettingHistoryPaginationAsync(Uri apiUrl, string token, DateTime startTime, DateTime endTime, int page = 0, int pageLimit = 1000, [EnumeratorCancellation] CancellationToken cancellationToken = default)
-    {
-        JsonObject request = new JsonObject
-        {
-            { "From", startTime.ToUniversalTime().ToString("s") },
-            { "To", endTime.ToUniversalTime().ToString("s") },
-            { "Pagination", new JsonObject {
-                {"page",page },
-                {"rowperpage",pageLimit } }
-            }
-        };
-
-        var uriBuilder = new UriBuilder(apiUrl);
-        var query = HttpUtility.ParseQueryString(uriBuilder.Query);
-        query["token"] = token;
-        uriBuilder.Query = query.ToString();
-
-        var jsonNode = await PostAsync(
-            uriBuilder.Uri,
-            request,
-            "BettinghistoryPagination",
-            cancellationToken).ConfigureAwait(false);
-
-        if (jsonNode["errorCode"]?.GetValue<int>() is null or not 0)
-        {
-            throw new GameProviderResponseErrorException(jsonNode["errorCode"]?.ToString(), jsonNode["message"]?.ToString());
-        }
-
-        if (jsonNode["totalPages"]!.GetValue<int>() == -1)
-        {
-            yield break;
-        }
-
-        var bets = jsonNode["Bets"].Deserialize<IEnumerable<BettingHistoryBet>>(_jsonSerializerOptions) ?? Enumerable.Empty<BettingHistoryBet>();
-
-        if (!bets.Any())
-        {
-            yield break;
-        }
-
-        foreach (var bet in bets)
-        {
-            yield return bet;
-        }
-        ;
-    }
-
     public async IAsyncEnumerable<BetSettled> GetHistoryBetsPagingAsync(Uri apiUrl, string token, DateTimeOffset startTime, DateTimeOffset endTime, int page = 0, int pageLimit = 1000, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         JsonObject request = new JsonObject
@@ -151,7 +104,7 @@ internal class GameDataApiClient : IGameDataApiClient
 
         var bets = jsonNode["Bets"]?.AsArray();
 
-        if (bets is null || !bets.Any())
+        if (bets is null || bets.Count == 0)
         {
             yield break;
         }
@@ -204,7 +157,7 @@ internal class GameDataApiClient : IGameDataApiClient
 
         var bets = jsonNode["Bets"]?.AsArray();
 
-        if (bets is null || !bets.Any())
+        if (bets is null || bets.Count == 0)
         {
             yield break;
         }
@@ -247,44 +200,6 @@ internal class GameDataApiClient : IGameDataApiClient
         return jsonNode["errorCode"]?.GetValue<int>() is null or not 0
             ? throw new GameProviderResponseErrorException(jsonNode["errorCode"]?.ToString(), jsonNode["message"]?.ToString())
             : jsonNode["token"]!.ToString();
-        ;
-    }
-
-    public async IAsyncEnumerable<OpenBet> OpenBetsAsync(Uri apiUrl, string token, DateTime startTime, DateTime endTime, [EnumeratorCancellation] CancellationToken cancellationToken = default)
-    {
-        JsonObject request = new JsonObject
-        {
-            { "From", startTime.ToUniversalTime().ToString("s") },
-            { "To", endTime.ToUniversalTime().ToString("s") }
-        };
-
-        var uriBuilder = new UriBuilder(apiUrl);
-        var query = HttpUtility.ParseQueryString(uriBuilder.Query);
-        query["token"] = token;
-        uriBuilder.Query = query.ToString();
-
-        var jsonNode = await PostAsync(
-            uriBuilder.Uri,
-            request,
-            "OpenBets",
-            cancellationToken).ConfigureAwait(false);
-
-        if (jsonNode["errorCode"]?.GetValue<int>() is null or not 0)
-        {
-            throw new GameProviderResponseErrorException(jsonNode["errorCode"]?.ToString(), jsonNode["message"]?.ToString());
-        }
-
-        var bets = jsonNode["Bets"].Deserialize<IEnumerable<OpenBet>>(_jsonSerializerOptions) ?? Enumerable.Empty<OpenBet>();
-
-        if (!bets.Any())
-        {
-            yield break;
-        }
-
-        foreach (var bet in bets)
-        {
-            yield return bet;
-        }
         ;
     }
 

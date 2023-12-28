@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Tgs.GameInterface.BTiService.Core.ApplicationServices;
-using Tgs.GameInterface.BTiService.Protos;
 using Tgs.GameInterface.BTiService.ViewModels;
 using Tgs.ServiceUtility;
 
@@ -262,132 +261,6 @@ public class BTiController : ControllerBase
     ///     Post
     ///
     ///         {
-    ///             "tokenApiUrl": "https://asia-east2-bq-data-api.cloudfunctions.net/",
-    ///             "historyBetsPagingApiUrl": "https://get-history-bets-paging-d5nlg5buca-de.a.run.app/",
-    ///             "agentUserName": "PegaGaming_GPIRMB",
-    ///             "agentPassword": "IM60Ho7Y4B9C",
-    ///             "startTime": "2022-10-19T09:00:00+08:00",
-    ///             "endTime": "2022-10-19T10:00:00+08:00",
-    ///             "page": 0,
-    ///             "pageLimit": 1000
-    ///         }
-    /// </remarks>
-    [HttpPost("game/history/settled", Name = "GameHistorySettled")]
-    public async IAsyncEnumerable<GameHistorySettledResultViewModel> GameHistorySettledAsync(
-        [FromServices] IQueryService<GameHistorySettledQuery, GameHistorySettledResult> service,
-        GameHistorySettledViewModel model)
-    {
-        var query = new GameHistorySettledQuery(
-            TokenApiUrl: model.TokenApiUrl,
-            HistoryBetsPagingApiUrl: model.HistoryBetsPagingApiUrl,
-            model.AgentUserName,
-            model.AgentPassword,
-            StartTime: model.StartTime,
-            EndTime: model.EndTime,
-            Page: model.Page,
-            PageLimit: model.PageLimit);
-
-        var gameRecords = await service
-                .QueryAsync(
-                    query: query,
-                    cancellationToken: HttpContext.RequestAborted)
-                .ToArrayAsync(
-                    cancellationToken: HttpContext.RequestAborted)
-                .ConfigureAwait(false);
-
-        if (!gameRecords.Any())
-        {
-            yield break;
-        }
-
-        foreach (var gameRecord in gameRecords)
-        {
-            yield return new GameHistorySettledResultViewModel(
-                PlayerCode: gameRecord.PlayerCode,
-                ExternalRoundId: gameRecord.ExternalRoundId,
-                IsClosed: gameRecord.IsClosed,
-                Status: (GameHistoryStatus)Enum.Parse(typeof(GameHistoryStatus), gameRecord.Status.Replace(" ", string.Empty), true),
-                ExternalCreatedOn: gameRecord.ExternalCreatedOn,
-                ExternalClosedOn: gameRecord.ExternalClosedOn,
-                Bet: gameRecord.Bet,
-                ValidBet: gameRecord.ValidBet,
-                PlayerWinLoss: gameRecord.PlayerWinLoss,
-                Turnover: gameRecord.Turnover,
-                Settle: gameRecord.Settle,
-                AdditionalData: gameRecord.AdditionalData);
-        }
-    }
-
-    /// <summary>
-    /// Games the history unsettled asynchronous.
-    /// </summary>
-    /// <param name="service">The service.</param>
-    /// <param name="model">The model.</param>
-    /// <returns></returns>
-    /// <remarks>
-    /// <b>Example</b><br />
-    ///
-    ///     Post
-    ///
-    ///         {
-    ///             "tokenApiUrl": "https://asia-east2-bq-data-api.cloudfunctions.net/",
-    ///             "openBetsApiUrl": "https://get-open-bets-d5nlg5buca-de.a.run.app/",
-    ///             "agentUserName": "PegaGaming_GPIRMB",
-    ///             "agentPassword": "IM60Ho7Y4B9C",
-    ///             "startTime": "2022-10-19T09:00:00+08:00",
-    ///             "endTime": "2022-10-19T10:00:00+08:00"
-    ///         }
-    /// </remarks>
-    [HttpPost("game/history/unsettled", Name = "GameHistoryUnsettled")]
-    public async IAsyncEnumerable<GameHistoryUnsettledResultViewModel> GameHistoryUnsettledAsync(
-        [FromServices] IQueryService<GameHistoryUnsettledQuery, GameHistoryUnsettledResult> service,
-        GameHistoryUnsettledViewModel model)
-    {
-        var query = new GameHistoryUnsettledQuery(
-            TokenApiUrl: model.TokenApiUrl,
-            OpenBetsApiUrl: model.OpenBetsApiUrl,
-            model.AgentUserName,
-            model.AgentPassword,
-            StartTime: model.StartTime,
-            EndTime: model.EndTime);
-
-        var gameRecords = await service
-                .QueryAsync(
-                    query: query,
-                    cancellationToken: HttpContext.RequestAborted)
-                .ToArrayAsync(
-                    cancellationToken: HttpContext.RequestAborted)
-                .ConfigureAwait(false);
-
-        if (!gameRecords.Any())
-        {
-            yield break;
-        }
-
-        foreach (var gameRecord in gameRecords)
-        {
-            yield return new GameHistoryUnsettledResultViewModel(
-                PlayerCode: gameRecord.PlayerCode,
-                ExternalRoundId: gameRecord.ExternalRoundId,
-                ExternalCreatedOn: gameRecord.ExternalCreatedOn,
-                Bet: gameRecord.Bet,
-                ValidBet: gameRecord.ValidBet,
-                AdditionalData: gameRecord.AdditionalData);
-        }
-    }
-
-    /// <summary>
-    /// Games the history settled asynchronous.
-    /// </summary>
-    /// <param name="service">The service.</param>
-    /// <param name="model">The model.</param>
-    /// <returns></returns>
-    /// <remarks>
-    /// <b>Example</b><br />
-    ///
-    ///     Post
-    ///
-    ///         {
     ///             "dataApiUrl": "https://data-api.442hattrick.com/",
     ///             "agentUserName": "PegaGaming_TGSPB1",
     ///             "agentPassword": "7Yd1deTAiNh8",
@@ -416,7 +289,8 @@ public class BTiController : ControllerBase
             cancellationToken: HttpContext.RequestAborted)
             .ToArrayAsync(
             cancellationToken: HttpContext.RequestAborted)
-            .ConfigureAwait(false);
+            .ConfigureAwait(false)
+            ?? Enumerable.Empty<GameWagerResult>();
 
         if (!gameWagers.Any())
         {
@@ -476,7 +350,8 @@ public class BTiController : ControllerBase
             cancellationToken: HttpContext.RequestAborted)
             .ToArrayAsync(
             cancellationToken: HttpContext.RequestAborted)
-            .ConfigureAwait(false);
+            .ConfigureAwait(false)
+            ?? Enumerable.Empty<GameWagerResult>();
 
         if (!gameWagers.Any())
         {

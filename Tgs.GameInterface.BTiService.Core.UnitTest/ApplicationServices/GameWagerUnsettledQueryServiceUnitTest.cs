@@ -29,7 +29,7 @@ public class GameWagerUnsettledQueryServiceUnitTest
 
         var betSettleds = new BetUnsettled[]
         {
-            new BetUnsettled(
+            new(
                 MerchantCustomerID:"4uhfooes94j9",
                 PurchaseID:"504134723166224384",
                 BetStatus:"Opened",

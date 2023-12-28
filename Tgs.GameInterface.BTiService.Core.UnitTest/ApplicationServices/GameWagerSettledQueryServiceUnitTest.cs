@@ -31,7 +31,7 @@ public class GameWagerSettledQueryServiceUnitTest
 
         var betSettleds = new BetSettled[]
         {
-            new BetSettled(
+            new(
                 MerchantCustomerID:"4uhtdyoha5d2",
                 PurchaseID:"504126437851365376",
                 BetStatus:"Won",
@@ -175,7 +175,7 @@ public class GameWagerSettledQueryServiceUnitTest
 
         var betSettleds = new BetSettled[]
         {
-            new BetSettled(
+            new(
                 MerchantCustomerID:"4uhtdyoha5d2",
                 PurchaseID:"504149378416721920",
                 BetStatus:"Lost",
@@ -356,7 +356,7 @@ public class GameWagerSettledQueryServiceUnitTest
 
         var betSettleds = new BetSettled[]
         {
-            new BetSettled(
+            new(
                 MerchantCustomerID:"4uh8eeckt0ie",
                 PurchaseID:"503894265982767104",
                 BetStatus:"Cashout",
@@ -500,7 +500,7 @@ public class GameWagerSettledQueryServiceUnitTest
 
         var betSettleds = new BetSettled[]
         {
-            new BetSettled(
+            new(
                 MerchantCustomerID:"4uhfooes94j9",
                 PurchaseID:"503704871078350848",
                 BetStatus:"Canceled",

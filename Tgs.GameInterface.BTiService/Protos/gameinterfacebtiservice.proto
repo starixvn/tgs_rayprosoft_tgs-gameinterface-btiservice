@@ -15,8 +15,6 @@ service  GameInterfaceBTiService{
   rpc FundIn (FundRequest) returns (FundReply);
   rpc FundOut (FundRequest) returns (FundReply);
   rpc FundStatus(FundStatusRequest) returns (BaseReply);
-  rpc GameHistorySettled (GameHistorySettledRequest) returns (GameHistorySettledReply);
-  rpc GameHistoryUnsettled (GameHistoryUnsettledRequest) returns (GameHistoryUnsettledReply);
   rpc GameAuthToken (GameAuthTokenRequest) returns (GameAuthTokenReply);
   rpc CheckingService(CheckingServiceRequest) returns (CheckingServiceReply);
   rpc GameWagerSettled (GameWagerSettledRequest) returns (GameWagerReply);
@@ -54,26 +52,6 @@ message PlayerCreateRequest {
 	string brand_code = 4;
 	string merchant_customer_code = 5;
 	string currency = 6;
-}
-
-message GameHistorySettledRequest {
-	string token_api_url = 1;
-	string history_bets_paging_api_url = 2;
-	string agent_user_name = 3;
-	string agent_password = 4;
-	google.protobuf.Timestamp start_time = 5; 
-	google.protobuf.Timestamp end_time = 6;
-	int32 page = 7;
-	int32 page_limit = 8;
-}
-
-message GameHistoryUnsettledRequest {
-	string token_api_url = 1;
-	string open_bets_api_url = 2;
-	string agent_user_name = 3;
-	string agent_password = 4;
-	google.protobuf.Timestamp start_time = 5; 
-	google.protobuf.Timestamp end_time = 6;
 }
 
 message GameWagerSettledRequest {
@@ -120,38 +98,6 @@ message FundReply {
     string transaction_id = 2;
     phoenix.protobuf.DecimalValue balance = 3; 
 	string resp = 4;
-}
-
-message GameHistorySettledReply {
-	repeated GameHistorySettled items = 1;
-}
-
-message GameHistorySettled {
-    string player_code = 1;
-    string external_round_id = 2;
-    bool is_closed = 3;
-    GameHistoryStatus status = 4;
-	google.protobuf.Timestamp external_created_on = 5;
-	google.protobuf.Timestamp external_closed_on = 6;
-	phoenix.protobuf.DecimalValue bet = 7;
-	phoenix.protobuf.DecimalValue valid_bet = 8;
-	phoenix.protobuf.DecimalValue player_win_loss = 9;
-	phoenix.protobuf.DecimalValue turnover = 10;
-	phoenix.protobuf.DecimalValue settle = 11;
-    string additional_data = 12;
-}
-
-message GameHistoryUnsettledReply {
-	repeated GameHistoryUnsettled items = 1;
-}
-
-message GameHistoryUnsettled {
-    string player_code = 1;
-    string external_round_id = 2;
-	google.protobuf.Timestamp external_created_on = 3;
-	phoenix.protobuf.DecimalValue bet = 4;
-	phoenix.protobuf.DecimalValue valid_bet = 5;
-    string additional_data = 6;
 }
 
 message GameWagerReply {

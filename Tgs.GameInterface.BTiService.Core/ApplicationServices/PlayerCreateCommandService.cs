@@ -3,18 +3,11 @@ using Tgs.ServiceUtility;
 
 namespace Tgs.GameInterface.BTiService.Core.ApplicationServices;
 
-internal class PlayerCreateCommandService : ICommandService<PlayerCreateCommand>
+internal class PlayerCreateCommandService(
+    IOptions<GameInterfaceSettingOptions> options,
+    IGameApiClient client) : ICommandService<PlayerCreateCommand>
 {
-    private readonly IGameApiClient _client;
-    private readonly GameInterfaceSettingOptions _gameInterfaceSetting;
-
-    public PlayerCreateCommandService(
-        IOptions<GameInterfaceSettingOptions> options,
-        IGameApiClient client)
-    {
-        _gameInterfaceSetting = options.Value;
-        _client = client ?? throw new ArgumentNullException(nameof(client));
-    }
+    private readonly GameInterfaceSettingOptions _gameInterfaceSetting = options.Value;
 
     public ValueTask ExecuteAsync(PlayerCreateCommand command, CancellationToken cancellationToken = default)
     {
@@ -31,7 +24,7 @@ internal class PlayerCreateCommandService : ICommandService<PlayerCreateCommand>
                 City = "Beijing"
             };
 
-        return _client.CreateNewUserAsync(
+        return client.CreateNewUserAsync(
             apiUrl: command.ApiUrl,
             agentUserName: command.AgentUserName,
             agentPassword: command.AgentPassword,
