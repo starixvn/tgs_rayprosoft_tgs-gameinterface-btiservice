@@ -4,8 +4,6 @@ metadata:
   name: {{ include "game-gameinterface-bti-service.fullname" . }}
   labels:
     {{- include "game-gameinterface-bti-service.labels" . | nindent 4 }}
-  annotations:
-    reloader.stakater.com/auto: "true"
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
@@ -20,7 +18,10 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "game-gameinterface-bti-service.selectorLabels" . | nindent 8 }}
+        {{- include "game-gameinterface-bti-service.labels" . | nindent 8 }}
+	{{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -37,11 +38,17 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
             - name: OTEL_SERVICE_NAME
-              value: Game-GameInterface-BTi-Service({{ .Release.Namespace }})
+              value: Game-GameInterface-BTI-Service({{ .Release.Namespace }})
             - name: NODE_IP
               valueFrom:
                 fieldRef:
                   fieldPath: status.hostIP
+            - name: RELEASE_NAMESPACE
+              value: {{ .Release.Namespace }}
+            - name: POD_IP
+              valueFrom:
+               fieldRef:
+                fieldPath: status.podIP 
           volumeMounts:
             - mountPath: /app/appsettings.Production.json
               name: appsettings
