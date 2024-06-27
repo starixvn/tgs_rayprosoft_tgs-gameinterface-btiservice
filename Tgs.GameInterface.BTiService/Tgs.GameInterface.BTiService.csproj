@@ -13,13 +13,10 @@
 		<DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
 		<NoWarn>$(NoWarn);1591;0063</NoWarn>
 	</PropertyGroup>
-	
-	<ItemGroup>
-		<None Remove="Protos\gameinterfacebtiservice.proto" />
-	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\Tgs.GameInterface.BTiService.Core\Tgs.GameInterface.BTiService.Core.csproj" />
+		<ProjectReference Include="..\Tgs.GameInterface.BTiService.Protos\Tgs.GameInterface.BTiService.Protos.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -39,10 +36,6 @@
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
 		<PackageReference Include="System.Linq.Async" Version="6.0.1" />
 		<PackageReference Include="Tgs.Interceptors" Version="0.2.1" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<Protobuf Include="Protos\gameinterfacebtiservice.proto" GrpcServices="Server" />
 	</ItemGroup>
 
 </Project>
