@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tgs.GameInterface.BTiServic
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tgs.GameInterface.BTiService.Core.UnitTest", "Tgs.GameInterface.BTiService.Core.UnitTest\Tgs.GameInterface.BTiService.Core.UnitTest.csproj", "{752AA0CC-8913-423B-8787-0A1F7597E8CA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tgs.GameInterface.BTiService.Protos", "Tgs.GameInterface.BTiService.Protos\Tgs.GameInterface.BTiService.Protos.csproj", "{58DD3395-5FB8-4492-81D4-5DCEC5DF39FB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{752AA0CC-8913-423B-8787-0A1F7597E8CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{752AA0CC-8913-423B-8787-0A1F7597E8CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{752AA0CC-8913-423B-8787-0A1F7597E8CA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{58DD3395-5FB8-4492-81D4-5DCEC5DF39FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{58DD3395-5FB8-4492-81D4-5DCEC5DF39FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{58DD3395-5FB8-4492-81D4-5DCEC5DF39FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{58DD3395-5FB8-4492-81D4-5DCEC5DF39FB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
